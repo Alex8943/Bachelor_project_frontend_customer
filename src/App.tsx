@@ -20,7 +20,7 @@ function App() {
             <Navbar />
           </GridItem>
 
-          <GridItem gridArea="main">
+          <GridItem gridArea="main" bgColor="linear(to-r, teal.500, green.500)">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />

@@ -7,21 +7,29 @@ function SignUp() {
   const [formData, setFormData] = useState({
     name: '',
     lastName: '',
-    role_fk: '',
+    role_fk: '', // Initially empty; will be set to "Customer" role ID later
     email: '',
-    password: ''
+    password: '',
   });
 
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const [roles, setRoles] = useState([]);
 
-  // Fetch roles on component mount
   useEffect(() => {
     const fetchRoles = async () => {
       try {
         const rolesData = await getRoles();
-        setRoles(rolesData); // Set the fetched roles to state
+        console.log('Fetched Roles:', rolesData); // Log roles to confirm
+        setRoles(rolesData);
+
+        // Automatically set the default "Customer" role ID
+        const customerRole = rolesData.find((role) => role.name === 'Customer');
+        if (customerRole) {
+          setFormData((prev) => ({ ...prev, role_fk: customerRole.id }));
+        }
+
+      
       } catch (error) {
         console.error('Error fetching roles:', error);
       }
@@ -41,9 +49,9 @@ function SignUp() {
       const response = await signup({
         name: formData.name,
         lastname: formData.lastName,
-        role_fk: formData.role_fk, // Include role_fk in the signup request
+        role_fk: formData.role_fk, // Send the role_fk in the signup request
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       });
       setMessage('Signup successful!');
 
@@ -52,6 +60,7 @@ function SignUp() {
 
       // Redirect to dashboard
       navigate('/dashboard');
+
     } catch (error) {
       setMessage('Signup failed. Please try again.');
       console.error('Signup error:', error);
@@ -64,34 +73,49 @@ function SignUp() {
       templateColumns="1fr"
       alignItems="center"
       justifyContent="center"
-      bg="white"
+      bgGradient="linear(to-r, teal.500, green.500)" // Matches the website's theme
+      width={'100vw'}
+      color="white"
     >
-      <Box width="100%" maxW="400px" p={8} boxShadow="md" borderRadius="md" marginRight="40px">
+      <Box
+        width="100%"
+        maxW="400px"
+        p={8}
+        boxShadow="lg"
+        borderRadius="md"
+        bg="white"
+        color="gray.800"
+        textAlign="center"
+        margin={'0 auto'} // Center the box
+      >
         <form onSubmit={handleSubmit}>
           <VStack spacing={4} align="stretch">
-            <Heading as="h2" size="lg" textAlign="center">
-              Sign up
+            <Heading as="h2" size="lg" color="teal.500">
+              Sign Up
             </Heading>
             <Input
-              placeholder="Name"
+              placeholder="First Name"
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
+              focusBorderColor="teal.500"
             />
             <Input
-              placeholder="Last name"
+              placeholder="Last Name"
               type="text"
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
+              focusBorderColor="teal.500"
             />
             <Input
-              placeholder="Email address"
+              placeholder="Email Address"
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
+              focusBorderColor="teal.500"
             />
             <Input
               placeholder="Password"
@@ -99,29 +123,21 @@ function SignUp() {
               name="password"
               value={formData.password}
               onChange={handleChange}
+              focusBorderColor="teal.500"
             />
-            <Select
-              placeholder="Select role"
-              name="role_fk"
-              value={formData.role_fk}
-              onChange={handleChange}
-            >
-              {roles.map((role) => (
-                <option key={role.id} value={role.id}>
-                  {role.name}
-                </option>
-              ))}
-            </Select>
-            <Button colorScheme="blue" width="100%" type="submit">
+            <Button colorScheme="teal" width="100%" type="submit">
               SIGN UP
             </Button>
             {message && (
-              <Text textAlign="center" color={message.includes('successful') ? 'green.500' : 'red.500'}>
+              <Text
+                textAlign="center"
+                color={message.includes('successful') ? 'green.500' : 'red.500'}
+              >
                 {message}
               </Text>
             )}
-            <Text textAlign="center" color="blue.500" cursor="pointer">
-              <Link to="/">Already have an account? Go back</Link>
+            <Text fontSize="sm" color="teal.500">
+              <Link to="/login">Already have an account? Go back</Link>
             </Text>
           </VStack>
         </form>

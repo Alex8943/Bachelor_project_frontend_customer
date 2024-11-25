@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Heading, Text, Button, VStack } from '@chakra-ui/react';
+import { Box, Heading, Button, VStack } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   return (
@@ -9,18 +10,35 @@ const HomePage = () => {
       justifyContent="center"
       alignItems="center"
       height="100vh"
+      width="100vw" // Ensure it fills the full width of the viewport
       bgGradient="linear(to-r, teal.500, green.500)"
-      color="white"
+      color="green.50" 
+      margin="0" // Remove any margin
+      padding="0" // Remove any padding
     >
       <VStack spacing={6}>
-        <Heading as="h1" size="2xl">
-          Welcome to the Home Page
+        <Heading textAlign="center">
+          Welcome! Only a step away from a world of podcast reviews!
         </Heading>
-        <Text fontSize="xl">
-          This is the main landing page of your application.
-        </Text>
-        <Button colorScheme="teal" size="lg" onClick={() => alert('Button clicked!')}>
-          Click Me
+        {/* Buttons for Login and Signup */}
+        <Button
+          as={Link}
+          to="/login"
+          colorScheme="teal"
+          size="lg"
+          variant="solid"
+        >
+          Login
+        </Button>
+        <Button
+          as={Link}
+          to="/signup"
+          colorScheme="teal"
+          size="lg"
+          variant="solid"
+          _hover={{ bg: "whiteAlpha.300" }}
+        >
+          Signup
         </Button>
       </VStack>
     </Box>

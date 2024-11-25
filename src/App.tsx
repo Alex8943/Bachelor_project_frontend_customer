@@ -2,12 +2,14 @@ import React from 'react';
 import { Grid, GridItem, Flex } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/navbar';
-import HomePage from './components/not_protected/homePage'; // Importing the homePage component
+import HomePage from './components/not_protected/HomePage'; 
+import Login from './components/not_protected/Login';
+import Signup from './components/not_protected/Signup';
 
 function App() {
   return (
     <Router>
-      <Flex>
+      <Flex direction="column" minHeight="100vh">
         <Grid
           templateAreas={{
             base: `"nav" "main"`,
@@ -17,9 +19,12 @@ function App() {
           <GridItem gridArea="nav">
             <Navbar />
           </GridItem>
+
           <GridItem gridArea="main">
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
             </Routes>
           </GridItem>
         </Grid>

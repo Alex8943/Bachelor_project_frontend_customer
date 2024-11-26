@@ -17,12 +17,14 @@ const MyReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const fetchUserReviews = async () => {
       try {
         const userId = sessionStorage.getItem("userId");
         console.log("Fetched userId from sessionStorage:", userId); // Debug
+
         if (!userId) {
           throw new Error("User ID not found in sessionStorage");
         }
@@ -30,6 +32,7 @@ const MyReviews = () => {
         const reviews = await getAllReviewsByUser(userId);
         setReviews(reviews);
         setLoading(false);
+        setUserId(userId);
         console.log("Users id: ", userId);
       } catch (error) {
         console.error("Error fetching reviews:", error);
@@ -60,6 +63,7 @@ const MyReviews = () => {
         alignItems="center"
         minHeight="100vh"
         marginRight="400px"
+        
       >
         <Alert
           status="error"
@@ -67,6 +71,7 @@ const MyReviews = () => {
           boxShadow="md"
           borderRadius="md"
           bg="white"
+         
         >
           <AlertIcon />
           {error}
@@ -85,6 +90,8 @@ const MyReviews = () => {
         boxShadow="lg"
         borderRadius="lg"
         bg="white"
+        mt={40} // Add margin to create additional spacing
+        marginRight={200}
       >
         <Heading as="h1" size="lg" mb={6} color="teal.600" textAlign="center">
           My Reviews
@@ -98,6 +105,7 @@ const MyReviews = () => {
                 boxShadow="md"
                 borderRadius="md"
                 bg="gray.50"
+                pt={50} // Add padding to move the content down
               >
                 <Text fontSize="lg" fontWeight="bold">
                   {review.title}

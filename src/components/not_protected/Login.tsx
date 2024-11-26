@@ -21,13 +21,17 @@ const Login = () => {
     try {
       const response = await login({ email: formData.email, password: formData.password });
 
-      // Save user data to sessionStorage
-      sessionStorage.setItem('authToken', response.authToken);
-      sessionStorage.setItem('userId', response.user.id); // Save userId
-      sessionStorage.setItem('userRoleName', response.user.roleName || 'Unknown');
-      sessionStorage.setItem('userName', response.user.name);
-      sessionStorage.setItem('userEmail', response.user.email);
+          // Save user data to sessionStorage
+        sessionStorage.setItem('userId', response.user.id); // Save userId
+        sessionStorage.setItem('authToken', response.authToken);
+        sessionStorage.setItem("userRoleName", response.user.Role.name); // Save role name
+        sessionStorage.setItem('userName', response.user.name);
+        sessionStorage.setItem('userEmail', response.user.email);
+        
 
+
+        setMessage('Login successful!');
+        navigate('/protected/profile');
       // Check user role
       if (response.user.role_fk === 1 || response.user.role_fk === 2) {
         setMessage("Admins and Super-admins can't log in here.");
@@ -38,6 +42,8 @@ const Login = () => {
 
       setMessage('Login successful!');
       navigate('/protected/profile'); // Redirect to the profile page
+      console.log('Users role: ', response.user.Role.name);
+      console.log("Users id: ", response.user.id);
     } catch (error) {
       console.error('Login error:', error);
       setMessage('Login failed. Please check your credentials.');

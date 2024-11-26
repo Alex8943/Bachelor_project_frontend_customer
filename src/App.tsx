@@ -5,6 +5,9 @@ import Navbar from './components/navbar';
 import HomePage from './components/not_protected/HomePage'; 
 import Login from './components/not_protected/Login';
 import Signup from './components/not_protected/Signup';
+import Profile from './components/protected/user/Profile';
+import ProtectedRoute from './components/IsProtected';
+import MyReviews from './components/protected/user/MyReviews';
 
 function App() {
   return (
@@ -25,6 +28,14 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/protected/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route path="/myReviews" element={<MyReviews />} />
+              
             </Routes>
           </GridItem>
         </Grid>

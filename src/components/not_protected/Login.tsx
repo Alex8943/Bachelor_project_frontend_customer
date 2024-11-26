@@ -6,6 +6,7 @@ import { login } from '../../service/apiclient';
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -15,23 +16,33 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading
+    setMessage(''); // Clear previous messages
     try {
       const response = await login({ email: formData.email, password: formData.password });
 
+      // Save user data to sessionStorage
       sessionStorage.setItem('authToken', response.authToken);
-      sessionStorage.setItem('userRoleName', response.user.Role.name);
+      sessionStorage.setItem('userId', response.user.id); // Save userId
+      sessionStorage.setItem('userRoleName', response.user.roleName || 'Unknown');
       sessionStorage.setItem('userName', response.user.name);
       sessionStorage.setItem('userEmail', response.user.email);
 
-      if (response.user.role_fk === 3) {
-        setMessage("Customers can't login here");
+      // Check user role
+      if (response.user.role_fk === 1 || response.user.role_fk === 2) {
+        setMessage("Admins and Super-admins can't log in here.");
+        setIsLoading(false); // Stop loading
+        sessionStorage.clear(); // Clear sessionStorage for invalid logins
         return;
       }
 
       setMessage('Login successful!');
-      navigate('/protected/reviews');
+      navigate('/protected/profile'); // Redirect to the profile page
     } catch (error) {
+      console.error('Login error:', error);
       setMessage('Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -69,6 +80,7 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               focusBorderColor="teal.500"
+              isRequired
             />
             <Input
               placeholder="Password"
@@ -77,9 +89,15 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               focusBorderColor="teal.500"
+              isRequired
             />
             <Checkbox colorScheme="teal">Remember password</Checkbox>
-            <Button colorScheme="teal" width="100%" type="submit">
+            <Button
+              colorScheme="teal"
+              width="100%"
+              type="submit"
+              isLoading={isLoading} // Show loading spinner
+            >
               LOGIN
             </Button>
             {message && (
@@ -91,7 +109,7 @@ const Login = () => {
               </Text>
             )}
             <Text fontSize="sm" color="black">
-               forgot password?
+              Forgot password?
             </Text>
             <Text fontSize="sm" color="teal.500">
               <Link to="/signup">Sign Up</Link>

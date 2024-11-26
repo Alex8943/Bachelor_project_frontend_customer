@@ -22,7 +22,19 @@ export const getRoles = async () => {
 };
 
 
-export const login = async ({email, password}) => {
+interface LoginParams {
+  email: string;
+  password: string;
+}
+
+interface SignupParams {
+  name: string;
+  lastname: string;
+  email: string;
+  password: string;
+}
+
+export const login = async ({ email, password }: LoginParams) => {
   try {
     const response = await axios.post(`${API_URL}/auth/login`, { email, password });
     return response.data; // Assuming this is the format of the response
@@ -32,7 +44,7 @@ export const login = async ({email, password}) => {
   }
 };
 
-export const signup = async ({name, lastname, email, password}) => {
+export const signup = async ({name, lastname, email, password}: SignupParams) => {
   try{
     const response = await axios.post(`${API_URL}/auth/signup`, { name, lastname, email, password });
     return response.data;
@@ -41,3 +53,17 @@ export const signup = async ({name, lastname, email, password}) => {
     throw error;
   }
 };
+
+
+export const getAllReviewsByUser = async (id: number) => {
+  try {
+    const response = await axios.get(`${API_URL}/user/${id}/reviews`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    throw error;
+  }
+}
+
+
+

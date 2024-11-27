@@ -60,11 +60,14 @@ const Sidebar = () => {
               <Heading size="md" mb={6}>{userName}'s dashboard</Heading>
 
               <Link href="/myReviews" display="flex" alignItems="center">
-                <Icon as={FiHome} boxSize={5} mr={2} />
+                <Icon as={FiUser} boxSize={5} mr={2} />
                 <Text>My reviews</Text>
               </Link>
 
-              
+              <Link href='/reviews' display="flex" alignItems="center">
+                <Icon as={FiUser} boxSize={5} mr={2} />
+                <Text>Brows reviews</Text>
+              </Link>
               
             </VStack>
           </Box>

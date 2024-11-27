@@ -8,7 +8,8 @@ import Login from './components/not_protected/Login';
 import Signup from './components/not_protected/Signup';
 import Profile from './components/protected/user/Profile';
 import ProtectedRoute from './components/IsProtected';
-import MyReviews from './components/protected/user/MyReviews';
+import MyReviews from './components/protected/burgermenu/MyReviews';
+import Reviews from './components/protected/burgermenu/Reviews';
 
 function App() {
   return (
@@ -30,15 +31,12 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/myReviews" element={<MyReviews />} />
+               
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/myReviews" element={<MyReviews />} />
+                  <Route path="/reviews" element={<Reviews />} />
+                </Route>
               </Routes>
             </GridItem>
           </Grid>

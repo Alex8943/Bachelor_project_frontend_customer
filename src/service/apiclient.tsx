@@ -32,6 +32,7 @@ interface SignupParams {
   lastname: string;
   email: string;
   password: string;
+  role_fk?: number;
 }
 
 export const login = async ({ email, password }: LoginParams) => {
@@ -44,9 +45,9 @@ export const login = async ({ email, password }: LoginParams) => {
   }
 };
 
-export const signup = async ({name, lastname, email, password}: SignupParams) => {
+export const signup = async ({name, lastname, email, password, role_fk}: SignupParams) => {
   try{
-    const response = await axios.post(`${API_URL}/auth/signup`, { name, lastname, email, password });
+    const response = await axios.post(`${API_URL}/auth/signup`, { name, lastname, email, password, role_fk});
     return response.data;
   }catch(error){
     console.error('Error fetching reviews:', error);

@@ -31,7 +31,7 @@ const Login = () => {
 
 
         setMessage('Login successful!');
-        navigate('/protected/profile');
+        navigate('/profile');
       // Check user role
       if (response.user.role_fk === 1 || response.user.role_fk === 2) {
         setMessage("Admins and Super-admins can't log in here.");
@@ -41,14 +41,12 @@ const Login = () => {
       }
 
       setMessage('Login successful!');
-      navigate('/protected/profile'); // Redirect to the profile page
+      navigate('/profile'); // Redirect to the profile page
       console.log('Users role: ', response.user.Role.name);
       console.log("Users id: ", response.user.id);
     } catch (error) {
       console.error('Login error:', error);
       setMessage('Login failed. Please check your credentials.');
-    } finally {
-      setIsLoading(false); // Stop loading
     }
   };
 

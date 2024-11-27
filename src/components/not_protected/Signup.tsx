@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Grid, Heading, Input, Button, Text, VStack, Select } from '@chakra-ui/react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Box, Grid, Heading, Input, Button, Text, VStack } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signup, getRoles } from '../../service/apiclient';
+import { AuthContext } from '../AuthContext'; // Ensure this path is correct
 
 function SignUp() {
   const [formData, setFormData] = useState({
     name: '',
-    lastName: '',
-    role_fk: '', // Initially empty; will be set to "Customer" role ID later
+    lastname: '',
+    role_fk: 3, // Default to "Customer" role ID
     email: '',
     password: '',
   });
@@ -16,54 +17,61 @@ function SignUp() {
   const navigate = useNavigate();
   const [roles, setRoles] = useState([]);
 
+  const { login } = useContext(AuthContext); // Use login function from AuthContext
+
   useEffect(() => {
     const fetchRoles = async () => {
       try {
         const rolesData = await getRoles();
-        console.log('Fetched Roles:', rolesData); // Log roles to confirm
-        setRoles(rolesData);
+        console.log('Fetched Roles:', rolesData);
 
-        // Automatically set the default "Customer" role ID
-        const customerRole = rolesData.find((role) => role.name === 'Customer');
+        // Automatically set the default "Customer" role ID if found
+        const customerRole = rolesData.find((role) => role.name.toLowerCase() === 'customer');
         if (customerRole) {
           setFormData((prev) => ({ ...prev, role_fk: customerRole.id }));
         }
-
-      
       } catch (error) {
         console.error('Error fetching roles:', error);
+        // Default to "Customer" role ID if fetching roles fails
+        setFormData((prev) => ({ ...prev, role_fk: 3 }));
       }
     };
 
     fetchRoles();
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setMessage('');
+    console.log('Submitting signup data:', formData);
+
     try {
-      const response = await signup({
-        name: formData.name,
-        lastname: formData.lastName,
-        role_fk: formData.role_fk, // Send the role_fk in the signup request
-        email: formData.email,
-        password: formData.password,
-      });
-      setMessage('Signup successful!');
+      const response = await signup(formData);
+      console.log('Backend response:', response);
 
-      // Store token in local storage if provided
-      localStorage.setItem('authToken', response.token);
+      if (response.authToken) {
+        // Save user data to sessionStorage
+        sessionStorage.setItem('userId', response.user.id); // Save userId
+        sessionStorage.setItem('authToken', response.authToken);
+        sessionStorage.setItem('userRoleName', response.user.rolename); // Save role name
+        sessionStorage.setItem('userName', response.user.name);
+        sessionStorage.setItem('userEmail', response.user.email);
 
-      // Redirect to dashboard
-      navigate('/dashboard');
-
-    } catch (error) {
-      setMessage('Signup failed. Please try again.');
-      console.error('Signup error:', error);
+        login(response.authToken); // Store token in context
+        setMessage('Signup successful!');
+        console.log('Signup successful. Redirecting to profile...');
+        navigate('/profile'); // Redirect after successful signup
+      } else {
+        setMessage('Signup failed. Token is missing in response.');
+      }
+    } catch (error: any) {
+      console.error('Signup error:', error.response || error.message);
+      setMessage(error.response?.data?.message || 'Signup failed. Please try again.');
     }
   };
 
@@ -73,8 +81,8 @@ function SignUp() {
       templateColumns="1fr"
       alignItems="center"
       justifyContent="center"
-      bgGradient="linear(to-r, teal.500, green.500)" // Matches the website's theme
-      width={'100vw'}
+      bgGradient="linear(to-r, teal.500, green.500)"
+      width="100vw"
       color="white"
     >
       <Box
@@ -86,7 +94,7 @@ function SignUp() {
         bg="white"
         color="gray.800"
         textAlign="center"
-        margin={'0 auto'} // Center the box
+        margin="0 auto"
       >
         <form onSubmit={handleSubmit}>
           <VStack spacing={4} align="stretch">
@@ -104,8 +112,8 @@ function SignUp() {
             <Input
               placeholder="Last Name"
               type="text"
-              name="lastName"
-              value={formData.lastName}
+              name="lastname"
+              value={formData.lastname}
               onChange={handleChange}
               focusBorderColor="teal.500"
             />

@@ -11,17 +11,30 @@ import {
   AlertIcon,
 } from "@chakra-ui/react";
 import { getAllReviewsByUser } from "../../../service/apiclient";
-import { navigate } from "@reach/router";
+import { Link, useNavigate } from "react-router-dom";
 
 const MyReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [message, setMessage] = useState('');
 
+  const navigate = useNavigate();
+  useEffect(() => {
+    const checkAcess = async () => {
+      const userId = sessionStorage.getItem("authToken");
+      if (!userId) {
+        setMessage("You have to be signed in to accces this page")
+        navigate("/");
+      }
+    }
+    checkAcess();
+  }, []);
   useEffect(() => {
     const fetchUserReviews = async () => {
       try {
+
         const userId = sessionStorage.getItem("userId");
         console.log("Fetched userId from sessionStorage:", userId); // Debug
 

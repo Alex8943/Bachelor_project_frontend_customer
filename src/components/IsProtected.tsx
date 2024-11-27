@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
+import { AuthContext } from './AuthContext'; // Ensure this path is correct
 
-const ProtectedRoute = ({ children }) => {
-  const authToken = localStorage.getItem('authToken'); // Check if token exists
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { authToken } = useContext(AuthContext); // Use the authToken from the context
 
   if (!authToken) {
-    return <Navigate to="/" />; // Redirect to login if not authenticated
+    console.log('You must be signed in to access this page');
+    return <Navigate to="/" replace />; // Redirect to the home page if not authenticated
   }
-
-  return children; // Render the protected component if authenticated
+  console.log("You're signed in. Auth token is correct!");
+  return <>{children}</>; // Render the protected component if authenticated
 };
 
 export default ProtectedRoute;

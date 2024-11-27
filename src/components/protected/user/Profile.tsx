@@ -19,7 +19,9 @@ const Profile = () => {
         const storedUserId = sessionStorage.getItem("userId");
 
         if (!authToken) {
+            console.log('No auth token found. Redirecting to login...');
             navigate('/'); // Redirect to login if no auth token
+            
             return;
         }
 
@@ -30,6 +32,7 @@ const Profile = () => {
         setLoading(false);
         console.log("User role name: ", storedRoleName);
         console.log("Users id: ", storedUserId);
+        console.log("Users token: ", authToken);
     }, [navigate]);
 
     const handleSignOut = () => {

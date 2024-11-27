@@ -24,7 +24,7 @@ const Navbar = () => {
             world of podcast reviews
           </Text>
         <Spacer />
-        <Link to="/protected/profile">
+        <Link to="/profile">
         <IconButton
           icon={<FaUserCircle />}
           variant="ghost"

@@ -104,6 +104,38 @@ export const getOneUser = async (id: number) => {
 };
 
 
+export const deleteReview = async (id: number) => {
+  try {
+    
+    await axios.put(`${API_URL}/delete/review/${id}`);
+  } catch (error) {
+    console.error('Error deleting review:', error);
+    throw error;
+  }
+};
+
+export const showAllDeletedReviews = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/softDeletedReviews`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    throw error;
+  }
+}
+
+export const undeleteReview = async (id: number) => {
+  try {
+    await axios.put(`${API_URL}/undelete/review/${id}`);
+  } catch (error) {
+    console.error('Error undeleting review:', error);
+    throw error;
+  }
+};
+
+
+
+
 
 
 

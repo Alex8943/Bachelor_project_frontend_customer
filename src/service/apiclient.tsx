@@ -45,9 +45,9 @@ export const login = async ({ email, password }: LoginParams) => {
   }
 };
 
-export const signup = async ({name, lastname, email, password, role_fk}: SignupParams) => {
+export const signup = async ({name, lastname, email, password}: SignupParams) => {
   try{
-    const response = await axios.post(`${API_URL}/auth/signup`, { name, lastname, email, password, role_fk});
+    const response = await axios.post(`${API_URL}/auth/signup`, { name, lastname, email, password});
     return response.data;
   }catch(error){
     console.error('Error fetching reviews:', error);
@@ -55,6 +55,15 @@ export const signup = async ({name, lastname, email, password, role_fk}: SignupP
   }
 };
 
+export const updateUser = async (id: number, {name, lastname, email, password, role_fk}: SignupParams) => {
+  try{
+    const response = await axios.put(`${API_URL}/auth/updateUser/${id}`, {name, lastname, email, password, role_fk});
+    return response.data;
+  }catch(error){
+    console.error('Error fetching reviews:', error);
+    throw error;
+  }
+}
 
 export const getAllReviewsByUser = async (id: number) => {
   try {
@@ -131,14 +140,4 @@ export const undeleteReview = async (id: number) => {
     console.error('Error undeleting review:', error);
     throw error;
   }
-};
-
-
-
-
-
-
-
-
-
-
+}

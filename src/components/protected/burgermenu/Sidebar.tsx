@@ -68,7 +68,11 @@ const Sidebar = () => {
                 <Icon as={FiUser} boxSize={5} mr={2} />
                 <Text>Brows reviews</Text>
               </Link>
-              
+
+              <Link href='/settings' display="flex" alignItems="center">
+                <Icon as={FiSettings} boxSize={5} mr={2} />
+                <Text>Profile settings</Text>
+              </Link>
             </VStack>
           </Box>
         </DrawerContent>

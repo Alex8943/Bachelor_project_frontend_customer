@@ -49,45 +49,49 @@ const Profile = () => {
     }
 
     return (
-        <Flex 
-            minHeight="100vh" 
-            p={8} 
-            justifyContent="center" 
-            alignItems="center" 
-            bgGradient="linear(to-r, teal.500, green.500)"
-            width={'100vw'}
-        >
-            <Box
-                width="100%"
-                maxW="500px"
-                p={8}
-                boxShadow="xl"
-                borderRadius="lg"
-                bg="white"
-                textAlign="center"
-                margin="0 auto"
-
-            >
-                <Heading as="h1" size="lg" mb={6} color="teal.600">
-                    User Profile
-                </Heading>
-                <VStack spacing={4} align="stretch">
-                    <Text fontSize="lg" color="gray.700">
-                        <strong>Name:</strong> {userName}
-                    </Text>
-                    <Text fontSize="lg" color="gray.700">
-                        <strong>Email:</strong> {userEmail}
-                    </Text>
-                    <Text fontSize="lg" color="gray.700">
-                        <strong>Role:</strong> {userRoleName}
-                    </Text>
-                    <Button colorScheme="teal" onClick={handleSignOut}>
-                        Sign Out
-                    </Button>
-                </VStack>
-            </Box>
-        </Flex>
-    );
-};
-
+        <Box bg="teal.50" minHeight="100vh" p={6} display="flex" justifyContent="center" alignItems="center" width="100vw">
+          <Box
+            maxWidth="800px"
+            width="100%"
+            p={8}
+            bg="white"
+            borderRadius="lg"
+            boxShadow="lg"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+          >
+            {/* Title Section */}
+            <Heading as="h1" size="2xl" mb={6} color="teal.700" textAlign="center">
+              User Profile
+            </Heading>
+      
+            {/* User Info Section */}
+            <VStack spacing={6} align="stretch" width="100%">
+              <Box>
+                <Text fontSize="lg" color="gray.700">
+                  <strong>Name:</strong> {userName || "Unknown"}
+                </Text>
+              </Box>
+              <Box>
+                <Text fontSize="lg" color="gray.700">
+                  <strong>Email:</strong> {userEmail || "Unknown"}
+                </Text>
+              </Box>
+              <Box>
+                <Text fontSize="lg" color="gray.700">
+                  <strong>Role:</strong> {userRoleName || "Unknown"}
+                </Text>
+              </Box>
+      
+              {/* Sign Out Button */}
+              <Button colorScheme="teal" size="lg" width="100%" onClick={handleSignOut}>
+                Sign Out
+              </Button>
+            </VStack>
+          </Box>
+        </Box>
+      );
+}      
 export default Profile;

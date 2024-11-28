@@ -130,7 +130,15 @@ const MyReviews = () => {
   }
 
   return (
-    <Flex direction="column" align="center" minHeight="100vh" p={8}>
+    <Flex
+      direction="column"
+      align="center"
+      minHeight="100vh"
+      p={8}
+      bg="teal.50"
+      width="100vw"
+      justify="flex-start" // Align content to the top initially
+    >
       <Box
         width="100%"
         maxW="800px"
@@ -138,8 +146,7 @@ const MyReviews = () => {
         boxShadow="lg"
         borderRadius="lg"
         bg="white"
-        mt={40} // Add margin to create additional spacing
-        marginRight={200}
+        mt={40} // Use this to push the content down
       >
         <Heading as="h1" size="lg" mb={6} color="teal.600" textAlign="center">
           My Reviews
@@ -159,7 +166,6 @@ const MyReviews = () => {
                 boxShadow="md"
                 borderRadius="md"
                 bg="gray.50"
-                pt={50} // Add padding to move the content down
               >
                 <Text fontSize="lg" fontWeight="bold">
                   {review.title}
@@ -196,6 +202,6 @@ const MyReviews = () => {
       </Box>
     </Flex>
   );
-};
+}
 
 export default MyReviews;

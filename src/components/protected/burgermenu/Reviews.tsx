@@ -115,12 +115,15 @@ const Reviews = () => {
                       <Tr key={review.id}>
                         <Td>{review.id}</Td>
                         <Td>
+                        <Td>
                           <Link
-                            to={`/review/${review.id}`}
+                            to={`/getReview/${review.id}`} // Navigate to the review details page
                             style={{ color: "teal", textDecoration: "underline" }}
                           >
                             {review.title}
                           </Link>
+                        </Td>
+
                         </Td>
                         <Td style={{ color: "rgba(0, 0, 0, 0.7)", whiteSpace: "nowrap" }}>
                           {truncateText(review.description, 50)}

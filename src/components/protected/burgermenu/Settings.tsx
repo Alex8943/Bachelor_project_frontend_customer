@@ -70,65 +70,91 @@ const Settings = () => {
       console.error('Error updating user:', err);
     }
   };  
-
+  
   return (
-    <Flex justifyContent="center" alignItems="center" minHeight="100vh" width={'100vw'}>
-      <Box maxW="500px" p={6} borderWidth="1px" borderRadius="lg" boxShadow="lg" margin="0 auto" width="500px">
-        <Heading as="h1" size="lg" textAlign="center" mb={30}>
+    <Box bg="teal.50" minHeight="100vh" p={6} display="flex" justifyContent="center" alignItems="center" width="100vw">
+      <Box
+        maxWidth="800px"
+        width="100%"
+        p={8}
+        bg="white"
+        borderRadius="lg"
+        boxShadow="lg"
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        marginTop={"100px"}
+      >
+        {/* Title Section */}
+        <Heading as="h1" size="2xl" mb={6} color="teal.700" textAlign="center">
           User Settings
         </Heading>
-
+  
+        {/* Alerts for success or error */}
         {message && (
-          <Alert status="success" mb={4}>
+          <Alert status="success" mb={4} w="100%">
             <AlertIcon />
             {message}
           </Alert>
         )}
-
+  
         {error && (
-          <Alert status="error" mb={4}>
+          <Alert status="error" mb={4} w="100%">
             <AlertIcon />
             {error}
           </Alert>
         )}
-
-        <form onSubmit={handleSubmit}>
-          <VStack spacing={4} align="stretch">
+  
+        {/* Form Section */}
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <VStack spacing={6} align="stretch">
             <FormControl>
-              <FormLabel htmlFor="name">First Name</FormLabel>
+              <FormLabel htmlFor="name" color="teal.600">
+                First Name
+              </FormLabel>
               <Input
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="Enter your first name"
+                focusBorderColor="teal.400"
               />
             </FormControl>
-
+  
             <FormControl>
-              <FormLabel htmlFor="lastname">Last Name</FormLabel>
+              <FormLabel htmlFor="lastname" color="teal.600">
+                Last Name
+              </FormLabel>
               <Input
                 id="lastname"
                 name="lastname"
                 value={formData.lastname}
                 onChange={handleInputChange}
                 placeholder="Enter your last name"
+                focusBorderColor="teal.400"
               />
             </FormControl>
-
+  
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="email" color="teal.600">
+                Email
+              </FormLabel>
               <Input
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Enter your email"
+                focusBorderColor="teal.400"
               />
             </FormControl>
-
+  
             <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
+              <FormLabel htmlFor="password" color="teal.600">
+                Password
+              </FormLabel>
               <Input
                 id="password"
                 name="password"
@@ -136,17 +162,18 @@ const Settings = () => {
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Enter a new password (if changing)"
+                focusBorderColor="teal.400"
               />
             </FormControl>
-
-            <Button colorScheme="teal" type="submit" width="full">
+  
+            {/* Submit Button */}
+            <Button colorScheme="teal" type="submit" width="100%" size="lg">
               Update Settings
             </Button>
           </VStack>
         </form>
       </Box>
-    </Flex>
-  );
-};
-
+    </Box>
+  );  
+}  
 export default Settings;

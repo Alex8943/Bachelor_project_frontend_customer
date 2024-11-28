@@ -141,3 +141,25 @@ export const undeleteReview = async (id: number) => {
     throw error;
   }
 }
+
+
+export const getOneReview = async (id: number) => {
+  try {
+    const response = await axios.get(`${API_URL}/getReview/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching review:', error);
+    throw error;
+  }
+}
+
+export const likeAReview = async (userId: number, reviewId: number) => {
+  try {
+    // Send userId and reviewId in the request body
+    const response = await axios.post(`${API_URL}/like`, {userId, reviewId});
+    return response.data;
+  } catch (error) {
+    console.error('Error liking review:', error);
+    throw error;
+  }
+};

@@ -11,6 +11,7 @@ import ProtectedRoute from './components/IsProtected';
 import MyReviews from './components/protected/burgermenu/MyReviews';
 import Reviews from './components/protected/burgermenu/Reviews';
 import Settings from './components/protected/burgermenu/Settings';
+import ReviewDetails from './components/protected/burgermenu/ReviewDetails';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
                   <Route path="/myReviews" element={<MyReviews />} />
                   <Route path="/reviews" element={<Reviews />} />
                   <Route path="/settings" element={<Settings />} />
+                  <Route path="/getReview/:id" element={<ReviewDetails />} />
                 </Route>
               </Routes>
             </GridItem>

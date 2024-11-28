@@ -163,3 +163,13 @@ export const likeAReview = async (userId: number, reviewId: number) => {
     throw error;
   }
 };
+
+export const getLikedReviewsFromUser = async (userId: number) => {
+  try {
+    const response = await axios.get(`${API_URL}/liked/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching liked reviews:', error);
+    throw error;
+  }
+};

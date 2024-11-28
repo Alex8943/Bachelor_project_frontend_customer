@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getOneReview } from "../../../service/apiclient";
-import { Box, Divider, Flex, Heading, Tag, Text, Spinner } from "@chakra-ui/react";
+import { getOneReview, likeAReview } from "../../../service/apiclient"; // Import the likeAReview function
+import { Box, Divider, Flex, Heading, Tag, Text, Spinner, Button, Alert, AlertIcon } from "@chakra-ui/react";
 
 const ReviewDetails = () => {
   const { id } = useParams(); // Get the review ID from the URL
   const [review, setReview] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [likeMessage, setLikeMessage] = useState(null);
 
   useEffect(() => {
     const fetchReviewDetails = async () => {
@@ -24,6 +25,21 @@ const ReviewDetails = () => {
     fetchReviewDetails();
   }, [id]);
 
+  const handleLike = async () => {
+    try {
+      const userId = sessionStorage.getItem("userId"); // Assuming you store the user ID in session storage
+      if (!userId) {
+        setLikeMessage({ type: "error", text: "You need to log in to like a review." });
+        return;
+      }
+      const response = await likeAReview(Number(userId), Number(id)); // Call the likeAReview function
+      setLikeMessage({ type: "success", text: response });
+    } catch (err) {
+      console.error("Error liking review:", err);
+      setLikeMessage({ type: "error", text: "Failed to like the review." });
+    }
+  };
+
   if (loading) {
     return (
       <Flex justifyContent="center" alignItems="center" height="100vh">
@@ -37,7 +53,7 @@ const ReviewDetails = () => {
   }
 
   return (
-    <Box bg="teal.50" minHeight="100vh" p={6} width={'100vw'}>
+    <Box bg="teal.50" minHeight="100vh" p={6} width="100vw">
       <Box
         maxWidth="800px"
         mx="auto"
@@ -50,21 +66,34 @@ const ReviewDetails = () => {
         justifyContent="center"
         alignItems="center"
         margin="0 auto"
-        marginTop={"100px"}
+        marginTop="100px"
       >
         {/* Title Section */}
         <Heading as="h1" size="2xl" mb={4} color="teal.700" textAlign="center">
           {review.title}
         </Heading>
-  
+
         {/* Description Section */}
         <Text fontSize="lg" color="gray.700" mb={6} textAlign="justify">
           {review.description}
         </Text>
+
+        {/* Like Button */}
+        <Button colorScheme="teal" size="lg" onClick={handleLike} mt={4}>
+          Like Review
+        </Button>
+
+        {/* Like Response Message */}
+        {likeMessage && (
+          <Alert status={likeMessage.type} mt={4}>
+            <AlertIcon />
+            {likeMessage.text}
+          </Alert>
+        )}
       </Box>
-  
+
       <Divider my={6} />
-  
+
       <Box
         maxWidth="800px"
         mx="auto"
@@ -92,9 +121,9 @@ const ReviewDetails = () => {
             ))}
           </Flex>
         </Box>
-  
+
         <Divider my={6} />
-  
+
         {/* Creator and Update Info */}
         <Box textAlign="center">
           <Text fontSize="sm" color="gray.500" mb={1}>
@@ -107,6 +136,6 @@ const ReviewDetails = () => {
       </Box>
     </Box>
   );
-};  
+};
 
 export default ReviewDetails;

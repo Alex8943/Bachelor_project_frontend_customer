@@ -12,6 +12,7 @@ import MyReviews from './components/protected/burgermenu/MyReviews';
 import Reviews from './components/protected/burgermenu/Reviews';
 import Settings from './components/protected/burgermenu/Settings';
 import ReviewDetails from './components/protected/burgermenu/ReviewDetails';
+import Statestics from './components/protected/burgermenu/statestics';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
                   <Route path="/reviews" element={<Reviews />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/getReview/:id" element={<ReviewDetails />} />
+                  <Route path="/statestics" element={<Statestics />} />
                 </Route>
               </Routes>
             </GridItem>

@@ -195,3 +195,24 @@ export const dislikeAReview = async (userId: number, reviewId: number) => {
 };
 
 
+export const getTopGenres = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/genres/top`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching top genres:", error);
+    throw error;
+  }
+};
+
+export const getRandomReviews = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/reviews/3`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching random reviews:", error);
+    throw error;
+  }
+};
+
+

@@ -73,6 +73,11 @@ const Sidebar = () => {
                 <Icon as={FiSettings} boxSize={5} mr={2} />
                 <Text>Profile settings</Text>
               </Link>
+
+              <Link href='/statestics' display="flex" alignItems="center">
+                <Icon as={FiSettings} boxSize={5} mr={2} />
+                <Text>Statestics</Text>
+              </Link>
             </VStack>
           </Box>
         </DrawerContent>

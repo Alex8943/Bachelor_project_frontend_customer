@@ -173,3 +173,14 @@ export const getLikedReviewsFromUser = async (userId: number) => {
     throw error;
   }
 };
+
+export const dislikeAReview = async (userId: number, reviewId: number) => {
+  try {
+    // Send userId and reviewId in the request body
+    const response = await axios.put(`${API_URL}/dislike`, {userId, reviewId});
+    return response.data;
+  } catch (error) {
+    console.error('Error disliking review:', error);
+    throw error;
+  }
+};

@@ -18,20 +18,17 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true); // Start loading
     setMessage(''); // Clear previous messages
+  
     try {
       const response = await login({ email: formData.email, password: formData.password });
-
-          // Save user data to sessionStorage
-        sessionStorage.setItem('userId', response.user.id); // Save userId
-        sessionStorage.setItem('authToken', response.authToken);
-        sessionStorage.setItem("userRoleName", response.user.Role.name); // Save role name
-        sessionStorage.setItem('userName', response.user.name);
-        sessionStorage.setItem('userEmail', response.user.email);
-        
-
-
-        setMessage('Login successful!');
-        navigate('/profile');
+  
+      // Check if the user is blocked
+      if (response.user.isBlocked) {
+        setMessage('No email or password with these credentials.');
+        setIsLoading(false); // Stop loading
+        return;
+      }
+  
       // Check user role
       if (response.user.role_fk === 1 || response.user.role_fk === 2) {
         setMessage("Admins and Super-admins can't log in here.");
@@ -39,16 +36,26 @@ const Login = () => {
         sessionStorage.clear(); // Clear sessionStorage for invalid logins
         return;
       }
-
+  
+      // Save user data to sessionStorage
+      sessionStorage.setItem('userId', response.user.id); // Save userId
+      sessionStorage.setItem('authToken', response.authToken);
+      sessionStorage.setItem('userRoleName', response.user.Role.name); // Save role name
+      sessionStorage.setItem('userName', response.user.name);
+      sessionStorage.setItem('userEmail', response.user.email);
+  
       setMessage('Login successful!');
       navigate('/profile'); // Redirect to the profile page
       console.log('Users role: ', response.user.Role.name);
-      console.log("Users id: ", response.user.id);
+      console.log('Users id: ', response.user.id);
     } catch (error) {
       console.error('Login error:', error);
       setMessage('Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
+  
 
   return (
     <Grid

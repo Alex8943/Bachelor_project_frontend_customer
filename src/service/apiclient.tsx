@@ -65,6 +65,15 @@ export const updateUser = async (id: number, {name, lastname, email, password, r
   }
 }
 
+export const deleteUser = async (id: number) => {
+  try {
+    await axios.put(`${API_URL}/delete/user/${id}`);
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
+};
+
 export const getAllReviewsByUser = async (id: number) => {
   try {
     const response = await axios.get(`${API_URL}/user/${id}/reviews`);
@@ -184,3 +193,5 @@ export const dislikeAReview = async (userId: number, reviewId: number) => {
     throw error;
   }
 };
+
+

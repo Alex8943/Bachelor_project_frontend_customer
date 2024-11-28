@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Heading, Text, VStack, Flex, Spinner } from "@chakra-ui/react";
-import { getLikedReviewsFromUser, dislikeAReview } from "../../../service/apiclient"; // Update the path as needed
+import {
+  Box,
+  Button,
+  Heading,
+  Text,
+  VStack,
+  Flex,
+  Spinner,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+} from "@chakra-ui/react";
+import { getLikedReviewsFromUser, dislikeAReview, deleteUser } from "../../../service/apiclient"; // Update the path as needed
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -12,6 +26,8 @@ const Profile = () => {
   const [likedReviews, setLikedReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingLikedReviews, setLoadingLikedReviews] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // Manage dialog state
+  const cancelRef = React.useRef();
 
   useEffect(() => {
     const authToken = sessionStorage.getItem("authToken");
@@ -65,6 +81,21 @@ const Profile = () => {
     }
   };
 
+  const handleDeleteUser = async () => {
+    try {
+      if (!userId) {
+        console.error("User ID not found.");
+        return;
+      }
+      await deleteUser(userId); // Use the state variable userId
+      setIsDialogOpen(false); // Close dialog
+      sessionStorage.clear(); // Clear session storage
+      navigate("/"); // Redirect to login page
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+  
   if (loading) {
     return (
       <Flex minHeight="100vh" justifyContent="center" alignItems="center" bgGradient="linear(to-r, teal.500, green.500)">
@@ -150,6 +181,39 @@ const Profile = () => {
               </Text>
             )}
           </VStack>
+
+          {/* Delete User Button */}
+          <Button colorScheme="red" size="lg" width="100%" onClick={() => setIsDialogOpen(true)}>
+            Delete Account
+          </Button>
+
+          {/* Confirmation Dialog */}
+          <AlertDialog
+            isOpen={isDialogOpen}
+            leastDestructiveRef={cancelRef}
+            onClose={() => setIsDialogOpen(false)}
+          >
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  We're Sorry to See You Go!
+                </AlertDialogHeader>
+
+                <AlertDialogBody>
+                  Are you sure you want to delete your account? This action cannot be undone.
+                </AlertDialogBody>
+
+                <AlertDialogFooter>
+                  <Button ref={cancelRef} onClick={() => setIsDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button colorScheme="red" onClick={handleDeleteUser} ml={3}>
+                    Delete
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
 
           {/* Sign Out Button */}
           <Button colorScheme="teal" size="lg" width="100%" onClick={handleSignOut}>

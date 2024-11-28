@@ -9,12 +9,20 @@ const ReviewDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [likeMessage, setLikeMessage] = useState(null);
+  const [alreadyLiked, setAlreadyLiked] = useState(false); // Track if the user already liked the review
 
   useEffect(() => {
     const fetchReviewDetails = async () => {
       try {
+        const userId = sessionStorage.getItem("userId"); // Get the user ID from session storage
         const data = await getOneReview(Number(id)); // Fetch review by ID
         setReview(data);
+
+        // Check if the user already liked the review
+        if (data.ReviewActions?.some((action) => action.user_fk === Number(userId) && action.review_gesture)) {
+          setAlreadyLiked(true);
+        }
+
         setLoading(false);
       } catch (err) {
         setError("Failed to load review details");
@@ -34,6 +42,7 @@ const ReviewDetails = () => {
       }
       const response = await likeAReview(Number(userId), Number(id)); // Call the likeAReview function
       setLikeMessage({ type: "success", text: response });
+      setAlreadyLiked(true); // Disable the button after liking
     } catch (err) {
       console.error("Error liking review:", err);
       setLikeMessage({ type: "error", text: "Failed to like the review." });
@@ -79,8 +88,14 @@ const ReviewDetails = () => {
         </Text>
 
         {/* Like Button */}
-        <Button colorScheme="teal" size="lg" onClick={handleLike} mt={4}>
-          Like Review
+        <Button
+          colorScheme="teal"
+          size="lg"
+          onClick={handleLike}
+          mt={4}
+          isDisabled={alreadyLiked} // Disable the button if already liked
+        >
+          {alreadyLiked ? "Already Liked" : "Like Review"}
         </Button>
 
         {/* Like Response Message */}

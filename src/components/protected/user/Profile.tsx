@@ -15,7 +15,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
 } from "@chakra-ui/react";
-import { getLikedReviewsFromUser, dislikeAReview, deleteUser } from "../../../service/apiclient"; // Update the path as needed
+import { getLikedReviewsFromUser, dislikeAReview, deleteUser} from "../../../service/apiclient"; // Update the path as needed
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -53,13 +53,15 @@ const Profile = () => {
       const fetchLikedReviews = async () => {
         try {
           const reviews = await getLikedReviewsFromUser(userId);
-          setLikedReviews(reviews);
+          setLikedReviews(Array.isArray(reviews) ? reviews : []); // Ensure likedReviews is an array
         } catch (error) {
           console.error("Error fetching liked reviews:", error);
+          setLikedReviews([]); // Fallback to an empty array on error
         } finally {
           setLoadingLikedReviews(false);
         }
       };
+      
 
       fetchLikedReviews();
     }

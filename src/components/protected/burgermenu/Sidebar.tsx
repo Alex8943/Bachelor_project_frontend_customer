@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, VStack, Heading, Text, Link, Icon, IconButton, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, useDisclosure } from "@chakra-ui/react";
-import { FiHome, FiUser, FiSettings, FiMenu } from "react-icons/fi";
+import { FiHome, FiUser, FiSettings, FiMenu, FiSunset, FiUserCheck } from "react-icons/fi";
+import { FaPodcast } from "react-icons/fa";
 import { useEffect } from 'react';
 import { navigate } from '@reach/router';
 import { useState } from 'react';
@@ -75,7 +76,7 @@ const Sidebar = () => {
               </Link>
 
               <Link href='/statestics' display="flex" alignItems="center">
-                <Icon as={FiSettings} boxSize={5} mr={2} />
+                <Icon as={FiUserCheck} boxSize={5} mr={2} />
                 <Text>Statestics</Text>
               </Link>
             </VStack>

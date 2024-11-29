@@ -32,7 +32,7 @@ interface SignupParams {
   lastname: string;
   email: string;
   password: string;
-  role_fk?: number;
+  role_fk?: 3;
 }
 
 export const login = async ({ email, password }: LoginParams) => {
@@ -45,9 +45,9 @@ export const login = async ({ email, password }: LoginParams) => {
   }
 };
 
-export const signup = async ({name, lastname, email, password}: SignupParams) => {
+export const signup = async ({name, lastname, email, password, role_fk}: SignupParams) => {
   try{
-    const response = await axios.post(`${API_URL}/auth/signup`, { name, lastname, email, password});
+    const response = await axios.post(`${API_URL}/auth/signup`, { name, lastname, email, password, role_fk});
     return response.data;
   }catch(error){
     console.error('Error fetching reviews:', error);
@@ -109,7 +109,7 @@ export const getRangeOfReviews = async (max: any) => {
 
 export const getOneUser = async (id: number) => {
   try {
-    const response = await fetch(`http://localhost:3001/user/${id}`);
+    const response = await fetch(`${API_URL}/user/${id}`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }

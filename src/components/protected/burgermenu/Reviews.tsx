@@ -81,14 +81,31 @@ const Reviews = () => {
     });
   }, [filteredReviews]);
 
-  // Handle search by applying a filter
   const handleSearch = () => {
-    const filtered = allReviews.filter((review) =>
-      review.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredReviews(filtered);
-    setCurrentPage(1);  // Reset to first page after search
+    if (searchTerm.trim() === "") {
+      // Reset to show all reviews if the search bar is empty
+      setFilteredReviews(allReviews);
+    } else {
+      const filtered = allReviews.filter((review) =>
+        review.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredReviews(filtered);
+    }
+    setCurrentPage(1);  // Reset to the first page
   };
+  
+  // Trigger search automatically if search term is empty
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+  
+    // Automatically reset when input is empty
+    if (value.trim() === "") {
+      setFilteredReviews(allReviews);
+      setCurrentPage(1);  // Reset to first page
+    }
+  };
+  
 
   // Pagination logic
   const startIndex = (currentPage - 1) * reviewsPerPage;
@@ -107,19 +124,20 @@ const Reviews = () => {
       <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh" p={4}>
         <Box maxWidth="80%" width="100%" mx="auto">
         <Flex justifyContent="center" alignItems="center" mb={4}>
-          <Box width="70%">
-            <Input
-              placeholder="Search by title..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              width="100%"  // Make input take full width of its container
-              focusBorderColor="teal.400"
-            />
-          </Box>
-          <Button onClick={handleSearch} colorScheme="teal" ml={2}>
-            Search
-          </Button>
-        </Flex>
+        <Box width="70%">
+          <Input
+            placeholder="Search by title..."
+            value={searchTerm}
+            onChange={handleInputChange}  // Handle input change dynamically
+            width="100%"  
+            focusBorderColor="teal.400"
+          />
+        </Box>
+        <Button onClick={handleSearch} colorScheme="teal" ml={2}>
+          Search
+        </Button>
+      </Flex>
+
 
 
           {loading ? (

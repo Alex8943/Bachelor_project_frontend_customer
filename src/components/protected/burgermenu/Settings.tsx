@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, FormControl, FormLabel, Input, VStack, Heading, Alert, AlertIcon, Flex} from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  VStack,
+  Heading,
+  Alert,
+  AlertIcon,
+} from '@chakra-ui/react';
 import { updateUser, getOneUser } from '../../../service/apiclient';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,13 +18,16 @@ const Settings = () => {
     name: '',
     lastname: '',
     email: '',
-    password: ''
+    password: '',
   });
 
+  const [originalData, setOriginalData] = useState({}); // Store original user data
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAccess = async () => {
+    const fetchUserDetails = async () => {
       const authToken = sessionStorage.getItem("authToken");
       if (!authToken) {
         navigate("/");
@@ -29,21 +42,17 @@ const Settings = () => {
             name: userDetails.name || '',
             lastname: userDetails.lastname || '',
             email: userDetails.email || '',
-            password: '' // Leave password blank by default
+            password: '',  // Password remains blank unless changed
           });
+          setOriginalData(userDetails);  // Store old values
         } catch (error) {
           console.error('Error fetching user details:', error);
         }
       }
     };
 
-    checkAccess();
+    fetchUserDetails();
   }, [navigate]);
-
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
-
-  const userId = sessionStorage.getItem('userId'); // Assuming the user ID is stored in sessionStorage
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -52,25 +61,39 @@ const Settings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const userId = sessionStorage.getItem('userId');
+    if (!userId) {
+      setError('User ID not found');
+      return;
+    }
+
     try {
-      if (!userId) {
-        throw new Error('User ID not found');
+      // Fill missing fields with old values
+      const updatedData = {
+        name: formData.name || originalData.name,
+        lastname: formData.lastname || originalData.lastname,
+        email: formData.email || originalData.email,
+      };
+
+      // Only include password if changed
+      if (formData.password) {
+        updatedData.password = formData.password;
       }
-  
-      await updateUser(Number(userId), formData);
+
+      await updateUser(Number(userId), updatedData);
       setMessage('User updated successfully!');
       setError(null);
 
-      // Redirect to login
-      sessionStorage.clear(); // Clear session storage to force re-login
+      // Redirect to login to force re-login
+      sessionStorage.clear();
       navigate("/");
     } catch (err) {
       setMessage(null);
       setError('Failed to update user. Please try again.');
       console.error('Error updating user:', err);
     }
-  };  
-  
+  };
+
   return (
     <Box bg="teal.50" minHeight="100vh" p={6} display="flex" justifyContent="center" alignItems="center" width="100vw">
       <Box
@@ -86,27 +109,24 @@ const Settings = () => {
         alignItems="center"
         marginTop={"100px"}
       >
-        {/* Title Section */}
         <Heading as="h1" size="2xl" mb={6} color="teal.700" textAlign="center">
           User Settings
         </Heading>
-  
-        {/* Alerts for success or error */}
+
         {message && (
           <Alert status="success" mb={4} w="100%">
             <AlertIcon />
             {message}
           </Alert>
         )}
-  
+
         {error && (
           <Alert status="error" mb={4} w="100%">
             <AlertIcon />
             {error}
           </Alert>
         )}
-  
-        {/* Form Section */}
+
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
           <VStack spacing={6} align="stretch">
             <FormControl>
@@ -122,7 +142,7 @@ const Settings = () => {
                 focusBorderColor="teal.400"
               />
             </FormControl>
-  
+
             <FormControl>
               <FormLabel htmlFor="lastname" color="teal.600">
                 Last Name
@@ -136,7 +156,7 @@ const Settings = () => {
                 focusBorderColor="teal.400"
               />
             </FormControl>
-  
+
             <FormControl>
               <FormLabel htmlFor="email" color="teal.600">
                 Email
@@ -150,7 +170,7 @@ const Settings = () => {
                 focusBorderColor="teal.400"
               />
             </FormControl>
-  
+
             <FormControl>
               <FormLabel htmlFor="password" color="teal.600">
                 Password
@@ -165,8 +185,7 @@ const Settings = () => {
                 focusBorderColor="teal.400"
               />
             </FormControl>
-  
-            {/* Submit Button */}
+
             <Button colorScheme="teal" type="submit" width="100%" size="lg">
               Update Settings
             </Button>
@@ -174,6 +193,7 @@ const Settings = () => {
         </form>
       </Box>
     </Box>
-  );  
-}  
+  );
+};
+
 export default Settings;

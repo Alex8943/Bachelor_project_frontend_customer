@@ -12,86 +12,115 @@ import {
   Text,
   Flex,
   Button,
+  Input,
 } from "@chakra-ui/react";
 import { getRangeOfReviews, getOneUser } from "../../../service/apiclient";
 import { Link, useNavigate } from "react-router-dom";
 
 const Reviews = () => {
-  const [reviews, setReviews] = useState([]);
+  const [allReviews, setAllReviews] = useState([]);
+  const [filteredReviews, setFilteredReviews] = useState([]);
   const [users, setUsers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const reviewsPerPage = 25;
-
+  const reviewsPerPage = 10;
   const navigate = useNavigate();
 
+  // Check access on mount
   useEffect(() => {
     const checkAccess = async () => {
       const authToken = sessionStorage.getItem("authToken");
       if (!authToken) {
         navigate("/");
-        return;
       }
     };
     checkAccess();
   }, [navigate]);
 
-  const fetchReviews = async (page) => {
+  // Fetch all reviews
+  const fetchAllReviews = async () => {
     try {
       setLoading(true);
-      const startIndex = (page - 1) * reviewsPerPage;
-      const data = await getRangeOfReviews(startIndex + reviewsPerPage);
-      setReviews(data.slice(startIndex, startIndex + reviewsPerPage));
-      setLoading(false);
+      const reviewsData = await getRangeOfReviews(500); // Get up to 500 reviews
+      setAllReviews(reviewsData);
+      setFilteredReviews(reviewsData);  // Show all reviews initially
     } catch (error) {
-      setError("Failed to load reviews");
+      setError("Failed to load reviews.");
+    } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchReviews(currentPage);
-  }, [currentPage]);
+    fetchAllReviews();
+  }, []);
 
-
+  // Fetch user details dynamically and cache them
   const fetchUserDetails = async (userId) => {
     if (!users[userId]) {
       try {
-        console.log("Fetching details for user ID:", userId);
-        const user = await getOneUser(userId); // Expecting a valid user object
-        console.log("API Response for user ID", userId, ":", user);
-  
-        const userName = user.name || "Unknown"; // Extract name
-        setUsers((prevUsers) => ({ ...prevUsers, [userId]: { name: userName } }));
-        console.log("User details loaded for ID:", userId, userName);
+        const user = await getOneUser(userId);
+        setUsers((prevUsers) => ({
+          ...prevUsers,
+          [userId]: user.name || "Unknown",
+        }));
       } catch (error) {
-        console.error("Failed to fetch user details for ID:", userId, error);
+        console.error("Failed to fetch user details:", error);
       }
     }
   };
-  
-  
-    
 
+  // Trigger user fetching for all reviews (missing users)
   useEffect(() => {
-    reviews.forEach((review) => {
-      fetchUserDetails(review.user_fk);
+    filteredReviews.forEach((review) => {
+      if (!users[review.user_fk]) {
+        fetchUserDetails(review.user_fk);
+      }
     });
-  }, [reviews]);
+  }, [filteredReviews]);
 
-  const truncateText = (text, length = 50) => {
-    return text.length > length ? `${text.slice(0, length)}...` : text;
+  // Handle search by applying a filter
+  const handleSearch = () => {
+    const filtered = allReviews.filter((review) =>
+      review.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredReviews(filtered);
+    setCurrentPage(1);  // Reset to first page after search
   };
+
+  // Pagination logic
+  const startIndex = (currentPage - 1) * reviewsPerPage;
+  const currentReviews = filteredReviews.slice(startIndex, startIndex + reviewsPerPage);
 
   const goToNextPage = () => setCurrentPage((prev) => prev + 1);
   const goToPreviousPage = () => setCurrentPage((prev) => (prev > 1 ? prev - 1 : 1));
 
+  // Truncate text helper
+  const truncateText = (text, length = 50) => {
+    return text.length > length ? `${text.slice(0, length)}...` : text;
+  };
+
   return (
     <Flex minHeight="100vh" direction="column" mt={90}>
       <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh" p={4}>
-        <Box maxWidth="80%" width="100%" mx="auto" marginRight={200}>
-          <Flex justifyContent="space-between" alignItems="center" mb={4}></Flex>
+        <Box maxWidth="80%" width="100%" mx="auto">
+        <Flex justifyContent="center" alignItems="center" mb={4}>
+          <Box width="70%">
+            <Input
+              placeholder="Search by title..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              width="100%"  // Make input take full width of its container
+              focusBorderColor="teal.400"
+            />
+          </Box>
+          <Button onClick={handleSearch} colorScheme="teal" ml={2}>
+            Search
+          </Button>
+        </Flex>
+
 
           {loading ? (
             <Spinner size="xl" color="green.500" />
@@ -103,32 +132,27 @@ const Reviews = () => {
                 <Table variant="striped" colorScheme="teal">
                   <Thead>
                     <Tr>
-                      <Th color="teal.700">ID</Th>
-                      <Th color="teal.700">Title</Th>
-                      <Th color="teal.700">Content</Th>
-                      <Th color="teal.700">Created by</Th>
-                      <Th color="teal.700">Review updated</Th>
+                      <Th>ID</Th>
+                      <Th>Title</Th>
+                      <Th>Content</Th>
+                      <Th>Created by</Th>
+                      <Th>Review updated</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {reviews.map((review) => (
+                    {currentReviews.map((review) => (
                       <Tr key={review.id}>
                         <Td>{review.id}</Td>
                         <Td>
-                        <Td>
                           <Link
-                            to={`/getReview/${review.id}`} // Navigate to the review details page
+                            to={`/getReview/${review.id}`}
                             style={{ color: "teal", textDecoration: "underline" }}
                           >
                             {review.title}
                           </Link>
                         </Td>
-
-                        </Td>
-                        <Td style={{ color: "rgba(0, 0, 0, 0.7)", whiteSpace: "nowrap" }}>
-                          {truncateText(review.description, 50)}
-                        </Td>
-                        <Td>{users[review.user_fk]?.name || "Unknown"}</Td>
+                        <Td>{truncateText(review.description)}</Td>
+                        <Td>{users[review.user_fk] || "Loading..."}</Td>
                         <Td>{new Date(review.updatedAt).toLocaleDateString()}</Td>
                       </Tr>
                     ))}
@@ -137,19 +161,10 @@ const Reviews = () => {
               </TableContainer>
 
               <Flex justifyContent="center" mt={4}>
-                <Button
-                  onClick={goToPreviousPage}
-                  isDisabled={currentPage === 1}
-                  colorScheme="teal"
-                  mr={4}
-                >
+                <Button onClick={goToPreviousPage} isDisabled={currentPage === 1} colorScheme="teal" mr={4}>
                   Previous
                 </Button>
-                <Button
-                  onClick={goToNextPage}
-                  isDisabled={reviews.length < reviewsPerPage}
-                  colorScheme="teal"
-                >
+                <Button onClick={goToNextPage} isDisabled={currentReviews.length < reviewsPerPage} colorScheme="teal">
                   Next
                 </Button>
               </Flex>

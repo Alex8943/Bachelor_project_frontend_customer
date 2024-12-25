@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getOneReview, likeAReview } from "../../../service/apiclient"; // Import the likeAReview function
 import { Box, Divider, Flex, Heading, Tag, Text, Spinner, Button, Alert, AlertIcon } from "@chakra-ui/react";
+import { Link, useNavigate } from "react-router-dom";
 
 const ReviewDetails = () => {
   const { id } = useParams(); // Get the review ID from the URL
@@ -10,6 +11,19 @@ const ReviewDetails = () => {
   const [error, setError] = useState(null);
   const [likeMessage, setLikeMessage] = useState(null);
   const [alreadyLiked, setAlreadyLiked] = useState(false); // Track if the user already liked the review
+  
+  const authToken = sessionStorage.getItem("authToken");
+    const storedName = sessionStorage.getItem("userName");
+    const storedEmail = sessionStorage.getItem("userEmail");
+    const storedRoleName = sessionStorage.getItem("userRoleName");
+    const storedUserId = sessionStorage.getItem("userId");
+
+  const navigate = useNavigate();
+
+  if (!authToken) {
+    navigate("/"); // Redirect to login if no auth token
+    return;
+  }
 
   useEffect(() => {
     const fetchReviewDetails = async () => {

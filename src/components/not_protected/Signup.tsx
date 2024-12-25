@@ -8,7 +8,6 @@ function SignUp() {
   const [formData, setFormData] = useState({
     name: '',
     lastname: '',
-    role_fk: 3, // Default to "Customer" role ID
     email: '',
     password: '',
   });

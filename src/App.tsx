@@ -13,8 +13,8 @@ import Reviews from './components/protected/burgermenu/Reviews';
 import Settings from './components/protected/burgermenu/Settings';
 import ReviewDetails from './components/protected/burgermenu/ReviewDetails';
 import Statestics from './components/protected/burgermenu/Statestics';
-import CreateReview from './components/protected/burgermenu/createReview'
-import UpdateReview from './components/protected/burgermenu/updateReview';
+import CreateReview from './components/protected/burgermenu/CreateReview'
+import UpdateReview from './components/protected/burgermenu/UpdateReview';
 
 function App() {
   return (

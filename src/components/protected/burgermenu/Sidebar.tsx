@@ -3,19 +3,23 @@ import { Box, VStack, Heading, Text, Link, Icon, IconButton, Drawer, DrawerOverl
 import { FiHome, FiUser, FiSettings, FiMenu, FiSunset, FiUserCheck } from "react-icons/fi";
 import { FaPodcast } from "react-icons/fa";
 import { useEffect } from 'react';
-import { navigate } from '@reach/router';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 
 const Sidebar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [userName, setUserName] = useState('');
+  const navigate = useNavigate();
     
 
-  const authToken = sessionStorage.getItem('authToken'); // or localStorage.getItem('authToken')
+  useEffect(() => {
+    const authToken = sessionStorage.getItem('authToken');
     if (!authToken) {
-      navigate('/'); // Redirect to login page if token is missing
+      navigate('/');  // Redirect to login if no auth token
     }
+}, [navigate]);  // Add navigate as a dependency
+
 
     useEffect(() => {
         const authToken = sessionStorage.getItem('authToken');

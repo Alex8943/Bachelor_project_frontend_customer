@@ -18,7 +18,7 @@ export default defineConfig({
     alias: {
       util: 'rollup-plugin-node-polyfills/polyfills/util',
       sys: 'util',
-      '@': path.resolve(__dirname, 'src'),  // Ensures '@' points to /src correctly
+      '@': path.resolve(__dirname, '/src'),  // Ensures '@' points to /src correctly
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],  // Ensures Vite can resolve extensions automatically
   },

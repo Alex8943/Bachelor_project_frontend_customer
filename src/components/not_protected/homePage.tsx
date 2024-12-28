@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useContext} from 'react';
 import { Box, Heading, Button, VStack } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../AuthContext';
 
 const HomePage = () => {
+
+  const navigate = useNavigate();
+
+  const setAuth = () => {
+    
+    sessionStorage.setItem('authToken', 'mock_auth_token');
+    navigate('/');
+  };
+
   return (
     <Box
       display="flex"
@@ -27,6 +37,7 @@ const HomePage = () => {
           colorScheme="teal"
           size="lg"
           variant="solid"
+          onClick={setAuth}
         >
           Login
         </Button>
@@ -37,6 +48,7 @@ const HomePage = () => {
           size="lg"
           variant="solid"
           _hover={{ bg: "whiteAlpha.300" }}
+          onAbort={setAuth}
         >
           Signup
         </Button>

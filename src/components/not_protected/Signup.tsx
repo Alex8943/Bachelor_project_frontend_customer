@@ -101,7 +101,7 @@ function SignUp() {
               Sign Up
             </Heading>
             <Input
-              placeholder="First Name"
+              placeholder="First name"
               type="text"
               name="name"
               value={formData.name}
@@ -109,7 +109,7 @@ function SignUp() {
               focusBorderColor="teal.500"
             />
             <Input
-              placeholder="Last Name"
+              placeholder="Last name"
               type="text"
               name="lastname"
               value={formData.lastname}

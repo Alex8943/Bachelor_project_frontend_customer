@@ -16,6 +16,7 @@ import Statestics from './components/protected/burgermenu/Statestics';
 import CreateReview from './components/protected/burgermenu/CreateReview'
 import UpdateReview from './components/protected/burgermenu/UpdateReview';
 
+
 function App() {
   return (
     <AuthProvider> {/* Wrap the entire app with AuthProvider */}

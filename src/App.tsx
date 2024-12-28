@@ -16,7 +16,6 @@ import Statestics from './components/protected/burgermenu/Statestics';
 import CreateReview from './components/protected/burgermenu/CreateReview'
 import UpdateReview from './components/protected/burgermenu/UpdateReview';
 
-
 function App() {
   return (
     <AuthProvider> {/* Wrap the entire app with AuthProvider */}
@@ -34,7 +33,8 @@ function App() {
 
             <GridItem gridArea="main" bgColor="linear(to-r, teal.500, green.500)">
               <Routes>
-                <Route path="/" element={<HomePage />} />
+                {/* It should be a public route */}
+                <Route path="/" element={<HomePage />} /> 
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                

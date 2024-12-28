@@ -21,8 +21,8 @@ const MyReviews = () => {
   const navigate = useNavigate();
 
   // Fetch authToken and userId from sessionStorage
-  const authToken = sessionStorage.getItem("authToken");
-  const storedUserId = sessionStorage.getItem("userId");
+  const authToken: any = sessionStorage.getItem("authToken");
+  const storedUserId: any = sessionStorage.getItem("userId");
 
   // Redirect to login if no authToken is found
   useEffect(() => {

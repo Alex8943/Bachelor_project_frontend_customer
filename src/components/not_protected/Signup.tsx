@@ -18,7 +18,7 @@ function SignUp() {
 
   const { login } = useContext(AuthContext); // Use login function from AuthContext
 
-  useEffect(() => {
+  /*useEffect(() => {
     const fetchRoles = async () => {
       try {
         const rolesData = await getRoles();
@@ -38,6 +38,8 @@ function SignUp() {
 
     fetchRoles();
   }, []);
+
+  */
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

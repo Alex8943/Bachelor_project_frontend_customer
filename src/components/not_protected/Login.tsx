@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Box, Heading, VStack, Input, Checkbox, Button, Text } from '@chakra-ui/react';
+import { Grid, Box, Heading, VStack, Input, Button, Text } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../service/apiclient';
 
@@ -103,7 +103,6 @@ const Login = () => {
               focusBorderColor="teal.500"
               isRequired
             />
-            <Checkbox colorScheme="teal">Remember password</Checkbox>
             <Button
               colorScheme="teal"
               width="100%"

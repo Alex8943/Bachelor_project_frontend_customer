@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Box, Grid, Heading, Input, Button, Text, VStack } from '@chakra-ui/react';
+import React, { useState, useContext } from 'react';
+import { Box, Grid, Heading, Input, Button, Text, VStack, Checkbox, Link as ChakraLink, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
-import { signup, getRoles } from '../../service/apiclient';
-import { AuthContext } from '../AuthContext'; // Ensure this path is correct
+import { signup } from '../../service/apiclient';
+import { AuthContext } from '../AuthContext';
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -13,68 +13,62 @@ function SignUp() {
   });
 
   const [message, setMessage] = useState('');
+  const [isPolicyAccepted, setIsPolicyAccepted] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-  const [roles, setRoles] = useState([]);
-
-  const { login } = useContext(AuthContext); // Use login function from AuthContext
-
-  /*useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const rolesData = await getRoles();
-        console.log('Fetched Roles:', rolesData);
-
-        // Automatically set the default "Customer" role ID if found
-        const customerRole = rolesData.find((role) => role.name.toLowerCase() === 'customer');
-        if (customerRole) {
-          setFormData((prev) => ({ ...prev, role_fk: customerRole.id }));
-        }
-      } catch (error) {
-        console.error('Error fetching roles:', error);
-        // Default to "Customer" role ID if fetching roles fails
-        setFormData((prev) => ({ ...prev, role_fk: 3 }));
-      }
-    };
-
-    fetchRoles();
-  }, []);
-
-  */
+  const { login } = useContext(AuthContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePolicyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsPolicyAccepted(e.target.checked);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage('');
-    console.log('Submitting signup data:', formData);
-
-    try {
-      const response = await signup(formData);
-      console.log('Backend response:', response);
-
-      if (response.authToken) {
-        // Save user data to sessionStorage
-        sessionStorage.setItem('userId', response.user.id); // Save userId
-        sessionStorage.setItem('authToken', response.authToken);
-        sessionStorage.setItem('userRoleName', response.user.rolename); // Save role name
-        sessionStorage.setItem('userName', response.user.name);
-        sessionStorage.setItem('userEmail', response.user.email);
-
-        login(response.authToken); // Store token in context
-        setMessage('Signup successful!');
-        console.log('Signup successful. Redirecting to profile...');
-        navigate('/profile'); // Redirect after successful signup
-      } else {
-        setMessage('Signup failed. Token is missing in response.');
-      }
-    } catch (error: any) {
-      console.error('Signup error:', error.response || error.message);
-      setMessage(error.response?.data?.message || 'Signup failed. Please try again.');
+  
+    if (!isPolicyAccepted) {
+      setIsModalOpen(true);
+      return;
     }
+  
+    // Check if any input field is empty
+    if (!formData.name || !formData.lastname || !formData.email || !formData.password) {
+      setMessage('Please fill out the forms');
+      return;
+    }
+  
+    const performSignup = async () => {
+      try {
+        const response = await signup(formData);
+  
+        if (response.authToken) {
+          sessionStorage.setItem('userId', response.user.id);
+          sessionStorage.setItem('authToken', response.authToken);
+          sessionStorage.setItem('userRoleName', response.user.rolename);
+          sessionStorage.setItem('userName', response.user.name);
+          sessionStorage.setItem('userEmail', response.user.email);
+  
+          login(response.authToken);
+          setMessage('Signup successful!');
+          
+          navigate('/profile');
+        } else {
+          setMessage('Signup failed. Token is missing in response.');
+        }
+      } catch (error: any) {
+        // Show backend message or fallback message
+        setMessage(error.response?.data?.message || 'Signup failed. Please try again.');
+      }
+    };
+  
+    performSignup();
   };
+  
 
   return (
     <Grid
@@ -134,6 +128,13 @@ function SignUp() {
               onChange={handleChange}
               focusBorderColor="teal.500"
             />
+            <Checkbox colorScheme="teal" onChange={handlePolicyChange}>
+              I agree to the{' '}
+              <Link to="/policies" style={{ color: '#319795', textDecoration: 'underline' }}>
+                Policies
+              </Link>
+            </Checkbox>
+            
             <Button colorScheme="teal" width="100%" type="submit">
               SIGN UP
             </Button>
@@ -151,6 +152,26 @@ function SignUp() {
           </VStack>
         </form>
       </Box>
+
+      {/* Policy Modal */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Accept Policies</ModalHeader>
+          <ModalBody>
+            You must agree to our policies before signing up. Please review our{' '}
+            <Link to="/policies" style={{ color: '#319795', textDecoration: 'underline' }}>
+                Policies
+              </Link>{' '}
+            for more details.
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="teal" onClick={() => setIsModalOpen(false)}>
+              Okay
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Grid>
   );
 }

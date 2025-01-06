@@ -1,6 +1,7 @@
 import React, { useContext} from 'react';
 import { Box, Heading, Button, VStack } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
+import Footer from '../Footer';
 
 const HomePage = () => {
 
@@ -28,7 +29,7 @@ const HomePage = () => {
         <Heading textAlign="center">
           Welcome! Only a step away from a world of podcast reviews!
         </Heading>
-        {/* Buttons for Login and Signup */}
+        
         <Button
           as={Link}
           to="/login"
@@ -51,6 +52,7 @@ const HomePage = () => {
           Signup
         </Button>
       </VStack>
+      <Footer />
     </Box>
   );
 };

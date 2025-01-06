@@ -1,14 +1,12 @@
 import React, { useContext} from 'react';
 import { Box, Heading, Button, VStack } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../AuthContext';
 
 const HomePage = () => {
 
   const navigate = useNavigate();
 
   const setAuth = () => {
-    
     sessionStorage.setItem('authToken', 'mock_auth_token');
     navigate('/');
   };
@@ -48,7 +46,7 @@ const HomePage = () => {
           size="lg"
           variant="solid"
           _hover={{ bg: "whiteAlpha.300" }}
-          onAbort={setAuth}
+          onClick={setAuth}
         >
           Signup
         </Button>

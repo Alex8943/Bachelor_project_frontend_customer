@@ -21,16 +21,6 @@ const Sidebar = () => {
 }, [navigate]);  // Add navigate as a dependency
 
 
-    useEffect(() => {
-        const authToken = sessionStorage.getItem('authToken');
-        const storedName = sessionStorage.getItem('userName');
-        if (!authToken) {
-            navigate('/'); // Redirect to login if no auth token
-            return;
-        }
-        setUserName(storedName || 'Guest');
-    }, []);
-
 
   return (
     <>

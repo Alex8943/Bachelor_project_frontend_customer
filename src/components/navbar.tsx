@@ -4,8 +4,10 @@ import React from "react";
 import logo from "../assets/logo.webp";
 import { FaUserCircle } from "react-icons/fa";
 import Sidebar from "./protected/burgermenu/Sidebar";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  
     return (
       <HStack
         p={4}

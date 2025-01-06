@@ -6,7 +6,7 @@ import { login } from '../../service/apiclient';
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [isLoading, setIsLoading] = useState(false); 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -16,46 +16,47 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Start loading
-    setMessage(''); // Clear previous messages
+
+    // Check for empty email or password fields
+    if (!formData.email || !formData.password) {
+      navigate('/');  // Redirect to home if fields are empty
+      return;
+    }
+
+    setIsLoading(true); 
+    setMessage(''); 
   
     try {
       const response = await login({ email: formData.email, password: formData.password });
   
-      // Check if the user is blocked
       if (response.user.isBlocked) {
         setMessage('No email or password with these credentials.');
-        setIsLoading(false); // Stop loading
+        setIsLoading(false); 
         return;
       }
   
-      // Check user role
       if (response.user.role_fk === 1 || response.user.role_fk === 2) {
         setMessage("Admins and Super-admins can't log in here.");
-        setIsLoading(false); // Stop loading
-        sessionStorage.clear(); // Clear sessionStorage for invalid logins
+        setIsLoading(false); 
+        sessionStorage.clear(); 
         return;
       }
   
-      // Save user data to sessionStorage
-      sessionStorage.setItem('userId', response.user.id); // Save userId
+      sessionStorage.setItem('userId', response.user.id); 
       sessionStorage.setItem('authToken', response.authToken);
-      sessionStorage.setItem('userRoleName', response.user.Role.name); // Save role name
+      sessionStorage.setItem('userRoleName', response.user.Role.name); 
       sessionStorage.setItem('userName', response.user.name);
       sessionStorage.setItem('userEmail', response.user.email);
   
       setMessage('Login successful!');
-      navigate('/profile'); // Redirect to the profile page
-      console.log('Users role: ', response.user.Role.name);
-      console.log('Users id: ', response.user.id);
+      navigate('/profile'); 
     } catch (error) {
       console.error('Login error:', error);
       setMessage('Login failed. Please check your credentials.');
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false); 
     }
   };
-  
 
   return (
     <Grid
@@ -107,7 +108,7 @@ const Login = () => {
               colorScheme="teal"
               width="100%"
               type="submit"
-              isLoading={isLoading} // Show loading spinner
+              isLoading={isLoading}
             >
               LOGIN
             </Button>

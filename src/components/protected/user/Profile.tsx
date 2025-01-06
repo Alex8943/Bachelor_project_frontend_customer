@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -46,6 +46,12 @@ const Profile = () => {
     setUserRoleName(storedRoleName || "Unknown");
     setUserId(Number(storedUserId));
     setLoading(false);
+    
+    if(storedName === "Guest" || storedEmail === "Unknown" || storedRoleName === "Unknown" || !storedUserId){
+      console.log("Cant login");
+      navigate("/");
+    }
+    
   }, [navigate]);
 
   useEffect(() => {

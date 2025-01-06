@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, GridItem, Flex } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './components/AuthContext'; // Ensure the path to AuthContext is correct
-import Navbar from './components/navbar';
+import Navbar from './components/Navbar';
 import HomePage from './components/not_protected/HomePage';
 import Login from './components/not_protected/Login';
 import Signup from './components/not_protected/Signup';

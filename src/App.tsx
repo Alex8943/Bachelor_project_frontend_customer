@@ -20,6 +20,7 @@ import Policies from './components/Policies';
 
 
 function App() {
+  
   return (
     <AuthProvider> {/* Wrap the entire app with AuthProvider */}
       <Router>

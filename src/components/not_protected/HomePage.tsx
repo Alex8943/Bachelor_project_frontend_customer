@@ -1,10 +1,11 @@
-import React, { useContext} from 'react';
-import { Box, Heading, Button, VStack } from '@chakra-ui/react';
+import React from 'react';
+import { Box, Heading, Text, Button, VStack, Image } from '@chakra-ui/react';
+import { keyframes } from '@emotion/react';
 import { Link, useNavigate } from 'react-router-dom';
-import Footer from '../Footer';
+
+
 
 const HomePage = () => {
-
   const navigate = useNavigate();
 
   const setAuth = () => {
@@ -19,40 +20,38 @@ const HomePage = () => {
       justifyContent="center"
       alignItems="center"
       height="100vh"
-      width="100vw" // Ensure it fills the full width of the viewport
+      width="100vw"
       bgGradient="linear(to-r, teal.500, green.500)"
-      color="green.50" 
-      margin="0" // Remove any margin
-      padding="0" // Remove any padding
+      margin="0"
+      padding="0"
     >
-      <VStack spacing={6}>
-        <Heading textAlign="center">
-          Welcome! Only a step away from a world of podcast reviews!
-        </Heading>
         
-        <Button
-          as={Link}
-          to="/login"
-          colorScheme="teal"
-          size="lg"
-          variant="solid"
-          onClick={setAuth}
-        >
-          Login
-        </Button>
-        <Button
-          as={Link}
-          to="/signup"
-          colorScheme="teal"
-          size="lg"
-          variant="solid"
-          _hover={{ bg: "whiteAlpha.300" }}
-          onClick={setAuth}
-        >
-          Signup
-        </Button>
-      </VStack>
-      <Footer />
+
+
+        <VStack spacing={4}>
+          <Button
+            as={Link}
+            to="/login"
+            colorScheme="teal"
+            size="lg"
+            width="200px"
+            _hover={{ transform: 'scale(1.05)' }}
+            onClick={setAuth}
+          >
+            Login
+          </Button>
+          <Button
+            as={Link}
+            to="/signup"
+            colorScheme="teal"
+            size="lg"
+            width="200px"
+            _hover={{ transform: 'scale(1.05)', bg: "whiteAlpha.300" }}
+            onClick={setAuth}
+          >
+            Signup
+          </Button>
+        </VStack>
     </Box>
   );
 };

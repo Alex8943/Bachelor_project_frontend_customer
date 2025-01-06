@@ -47,10 +47,7 @@ const Profile = () => {
     setUserId(Number(storedUserId));
     setLoading(false);
     
-    if(storedName === "Guest" || storedEmail === "Unknown" || storedRoleName === "Unknown" || !storedUserId){
-      console.log("Cant login");
-      navigate("/");
-    }
+    
     
   }, [navigate]);
 

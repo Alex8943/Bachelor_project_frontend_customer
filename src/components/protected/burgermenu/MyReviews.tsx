@@ -24,12 +24,15 @@ const MyReviews = () => {
   const authToken: any = sessionStorage.getItem("authToken");
   const storedUserId: any = sessionStorage.getItem("userId");
 
+  const storedName = sessionStorage.getItem('name');
+
   // Redirect to login if no authToken is found
   useEffect(() => {
     if (!authToken) {
       navigate("/");
     }
     setUserId(storedUserId);
+    
   }, [authToken, navigate, storedUserId]);
 
   // Fetch all reviews by the logged-in user

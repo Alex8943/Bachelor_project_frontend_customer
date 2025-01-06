@@ -1,24 +1,23 @@
-import React, { useContext } from 'react';
-import { Navigate, Outlet} from 'react-router-dom';
-import { AuthContext } from './AuthContext'; // Ensure this path is correct
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
 
 const ProtectedRoute = () => {
-  const { authToken } = React.useContext(AuthContext); // Use authToken from context
-  
-  const navigate = useNavigate();
+  const authToken = sessionStorage.getItem("authToken");
+  const storedName = sessionStorage.getItem("userName");
+  const storedEmail = sessionStorage.getItem("userEmail");
+  const storedRoleName = sessionStorage.getItem("userRoleName");
+  const storedUserId = sessionStorage.getItem("userId");
 
-  useEffect(() => {
-    const authToken = sessionStorage.getItem('authToken');
-    if (!authToken) {
-      console.log("Redirecting to login...");
-      navigate('/');
-    }
-  }, [navigate]);
-  
+  // Perform the check synchronously during render
+  const isAuthenticated = authToken && storedName && storedEmail && storedRoleName && storedUserId;
+  const hasValidInfo = storedName !== "Guest" && storedEmail !== "Unknown" && storedRoleName !== "Unknown";
 
-  return <Outlet />; // Render child routes if authenticated
+  if (!isAuthenticated || !hasValidInfo) {
+    console.log("Redirecting to login...");
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;  // Render protected route children if authenticated
 };
 
 export default ProtectedRoute;

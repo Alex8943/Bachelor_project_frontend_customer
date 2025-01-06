@@ -42,7 +42,6 @@ function App() {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/policies" element={<Policies />} />
 
-
                 <Route element={<ProtectedRoute />}>
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/myReviews" element={<MyReviews />} />
@@ -52,8 +51,8 @@ function App() {
                   <Route path="/statestics" element={<Statestics />} />
                   <Route path="/createReview" element={<CreateReview />} />
                   <Route path="/update/review/:id" element={<UpdateReview />} />
-                  
                 </Route>
+                  
               </Routes>
             </GridItem>
           </Grid>

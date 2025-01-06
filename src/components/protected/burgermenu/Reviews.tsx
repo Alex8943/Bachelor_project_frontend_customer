@@ -18,6 +18,7 @@ import { getRangeOfReviews, getOneUser } from "../../../service/apiclient";
 import { Link, useNavigate } from "react-router-dom";
 
 const Reviews = () => {
+  const authToken = sessionStorage.getItem("authToken");
   const [allReviews, setAllReviews] = useState([]);
   const [filteredReviews, setFilteredReviews] = useState([]);
   const [users, setUsers] = useState({});
@@ -31,7 +32,6 @@ const Reviews = () => {
   // Check access on mount
   useEffect(() => {
     const checkAccess = async () => {
-      const authToken = sessionStorage.getItem("authToken");
       if (!authToken) {
         navigate("/");
       }

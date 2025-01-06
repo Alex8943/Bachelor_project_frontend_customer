@@ -314,16 +314,6 @@ export const getTopGenres = async () => {
   }
 };
 
-export const getRandomReviews = async () => {
-  try {
-    const authToken = getAuthToken();
-    const response = await axios.get(`${API_URL}/reviews/3`, {
-      headers: { Authorization: `Bearer ${authToken}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching random reviews:", error);
-    throw error;
-  }
-};
+
+
 

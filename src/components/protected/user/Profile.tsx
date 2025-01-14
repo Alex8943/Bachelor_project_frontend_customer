@@ -40,12 +40,14 @@ const Profile = () => {
       navigate("/"); // Redirect to login if no auth token
       return;
     }
-
+    
     setUserName(storedName || "Guest");
     setUserEmail(storedEmail || "Unknown");
     setUserRoleName(storedRoleName || "Unknown");
     setUserId(Number(storedUserId));
     setLoading(false);
+
+    console.log("User: ", storedName, storedEmail, storedRoleName, storedUserId);
     
     
     

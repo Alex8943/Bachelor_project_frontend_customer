@@ -46,20 +46,17 @@ function SignUp() {
       try {
         const response = await signup(formData);
   
-        if (response.authToken) {
-          sessionStorage.setItem('userId', response.user.id);
-          sessionStorage.setItem('authToken', response.authToken);
-          sessionStorage.setItem('userRoleName', response.user.rolename);
-          sessionStorage.setItem('userName', response.user.name);
-          sessionStorage.setItem('userEmail', response.user.email);
-  
-          login(response.authToken);
-          setMessage('Signup successful!');
-          
-          navigate('/profile');
-        } else {
-          setMessage('Signup failed. Token is missing in response.');
-        }
+        sessionStorage.setItem('userId', response.user.id);
+        sessionStorage.setItem('authToken', response.authToken);
+        sessionStorage.setItem('userRoleName', response.user.Role.name); // Updated to correctly save the role name
+        sessionStorage.setItem('userName', response.user.name);
+        sessionStorage.setItem('userEmail', response.user.email);
+
+        login(response.authToken);
+        setMessage('Signup successful!');
+        
+        navigate('/profile');
+
       } catch (error: any) {
         // Show backend message or fallback message
         setMessage(error.response?.data?.message || 'Signup failed. Please try again.');

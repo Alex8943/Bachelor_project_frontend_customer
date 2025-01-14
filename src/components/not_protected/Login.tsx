@@ -47,6 +47,7 @@ const Login = () => {
       sessionStorage.setItem('userRoleName', response.user.Role.name); 
       sessionStorage.setItem('userName', response.user.name);
       sessionStorage.setItem('userEmail', response.user.email);
+
   
       setMessage('Login successful!');
       navigate('/profile'); 

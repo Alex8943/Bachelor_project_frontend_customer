@@ -19,14 +19,14 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Reviews = () => {
   const authToken = sessionStorage.getItem("authToken");
-  const [allReviews, setAllReviews] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [filteredReviews, setFilteredReviews] = useState([]);
   const [users, setUsers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const reviewsPerPage = 10;
+  const reviewsPerPage = 25; // Set to match the backend limit
   const navigate = useNavigate();
 
   // Check access on mount
@@ -39,13 +39,15 @@ const Reviews = () => {
     checkAccess();
   }, [navigate]);
 
-  // Fetch all reviews
-  const fetchAllReviews = async () => {
+  // Fetch reviews for the current page
+  const fetchReviews = async (page) => {
     try {
       setLoading(true);
-      const reviewsData = await getRangeOfReviews(500); // Get up to 500 reviews
-      setAllReviews(reviewsData);
-      setFilteredReviews(reviewsData);  // Show all reviews initially
+      const offset = (page - 1) * reviewsPerPage;
+      const reviewsData = await getRangeOfReviews(reviewsPerPage, offset); // Updated to fetch based on offset
+      setReviews(reviewsData);
+      setFilteredReviews(reviewsData); // Reset the filtered reviews
+      console.log("Amount of reviews fetched from the backend: ", reviewsData.length);
     } catch (error) {
       setError("Failed to load reviews.");
     } finally {
@@ -54,8 +56,8 @@ const Reviews = () => {
   };
 
   useEffect(() => {
-    fetchAllReviews();
-  }, []);
+    fetchReviews(currentPage); // Fetch reviews whenever the page changes
+  }, [currentPage]);
 
   // Fetch user details dynamically and cache them
   const fetchUserDetails = async (userId) => {
@@ -72,7 +74,6 @@ const Reviews = () => {
     }
   };
 
-  // Trigger user fetching for all reviews (missing users)
   useEffect(() => {
     filteredReviews.forEach((review) => {
       if (!users[review.user_fk]) {
@@ -83,38 +84,29 @@ const Reviews = () => {
 
   const handleSearch = () => {
     if (searchTerm.trim() === "") {
-      // Reset to show all reviews if the search bar is empty
-      setFilteredReviews(allReviews);
+      setFilteredReviews(reviews);
     } else {
-      const filtered = allReviews.filter((review) =>
+      const filtered = reviews.filter((review) =>
         review.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredReviews(filtered);
     }
-    setCurrentPage(1);  // Reset to the first page
+    setCurrentPage(1);
   };
-  
-  // Trigger search automatically if search term is empty
+
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-  
-    // Automatically reset when input is empty
+
     if (value.trim() === "") {
-      setFilteredReviews(allReviews);
-      setCurrentPage(1);  // Reset to first page
+      setFilteredReviews(reviews);
+      setCurrentPage(1);
     }
   };
-  
-
-  // Pagination logic
-  const startIndex = (currentPage - 1) * reviewsPerPage;
-  const currentReviews = filteredReviews.slice(startIndex, startIndex + reviewsPerPage);
 
   const goToNextPage = () => setCurrentPage((prev) => prev + 1);
   const goToPreviousPage = () => setCurrentPage((prev) => (prev > 1 ? prev - 1 : 1));
 
-  // Truncate text helper
   const truncateText = (text, length = 50) => {
     return text.length > length ? `${text.slice(0, length)}...` : text;
   };
@@ -123,22 +115,20 @@ const Reviews = () => {
     <Flex minHeight="100vh" direction="column" mt={90}>
       <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh" p={4}>
         <Box maxWidth="80%" width="100%" mx="auto">
-        <Flex justifyContent="center" alignItems="center" mb={4}>
-        <Box width="70%">
-          <Input
-            placeholder="Search by title..."
-            value={searchTerm}
-            onChange={handleInputChange}  // Handle input change dynamically
-            width="100%"  
-            focusBorderColor="teal.400"
-          />
-        </Box>
-        <Button onClick={handleSearch} colorScheme="teal" ml={2}>
-          Search
-        </Button>
-      </Flex>
-
-
+          <Flex justifyContent="center" alignItems="center" mb={4}>
+            <Box width="70%">
+              <Input
+                placeholder="Search by title..."
+                value={searchTerm}
+                onChange={handleInputChange}
+                width="100%"
+                focusBorderColor="teal.400"
+              />
+            </Box>
+            <Button onClick={handleSearch} colorScheme="teal" ml={2}>
+              Search
+            </Button>
+          </Flex>
 
           {loading ? (
             <Spinner size="xl" color="green.500" />
@@ -158,7 +148,7 @@ const Reviews = () => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {currentReviews.map((review) => (
+                    {filteredReviews.map((review) => (
                       <Tr key={review.id}>
                         <Td>{review.id}</Td>
                         <Td>
@@ -182,7 +172,7 @@ const Reviews = () => {
                 <Button onClick={goToPreviousPage} isDisabled={currentPage === 1} colorScheme="teal" mr={4}>
                   Previous
                 </Button>
-                <Button onClick={goToNextPage} isDisabled={currentReviews.length < reviewsPerPage} colorScheme="teal">
+                <Button onClick={goToNextPage} isDisabled={filteredReviews.length < reviewsPerPage} colorScheme="teal">
                   Next
                 </Button>
               </Flex>
@@ -195,3 +185,4 @@ const Reviews = () => {
 };
 
 export default Reviews;
+

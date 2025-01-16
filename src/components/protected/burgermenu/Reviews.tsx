@@ -20,34 +20,29 @@ import { Link, useNavigate } from "react-router-dom";
 const Reviews = () => {
   const authToken = sessionStorage.getItem("authToken");
   const [reviews, setReviews] = useState([]);
-  const [filteredReviews, setFilteredReviews] = useState([]);
   const [users, setUsers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const reviewsPerPage = 25; // Set to match the backend limit
+  const reviewsPerPage = 25; // Number of reviews to fetch per page
   const navigate = useNavigate();
 
   // Check access on mount
   useEffect(() => {
-    const checkAccess = async () => {
-      if (!authToken) {
-        navigate("/");
-      }
-    };
-    checkAccess();
-  }, [navigate]);
+    if (!authToken) {
+      navigate("/");
+    }
+  }, [authToken, navigate]);
 
-  // Fetch reviews for the current page
-  const fetchReviews = async (page) => {
+  // Fetch reviews from the backend for the current page
+  const fetchReviews = async () => {
     try {
       setLoading(true);
-      const offset = (page - 1) * reviewsPerPage;
-      const reviewsData = await getRangeOfReviews(reviewsPerPage, offset); // Updated to fetch based on offset
+      const offset = (currentPage - 1) * reviewsPerPage; // Calculate offset based on the page
+      const reviewsData = await getRangeOfReviews(reviewsPerPage, offset); // Fetch reviews with limit and offset
       setReviews(reviewsData);
-      setFilteredReviews(reviewsData); // Reset the filtered reviews
-      console.log("Amount of reviews fetched from the backend: ", reviewsData.length);
+      console.log("Reviews fetched pr. page: ", reviewsData);
     } catch (error) {
       setError("Failed to load reviews.");
     } finally {
@@ -56,7 +51,7 @@ const Reviews = () => {
   };
 
   useEffect(() => {
-    fetchReviews(currentPage); // Fetch reviews whenever the page changes
+    fetchReviews(); // Fetch reviews when the page changes
   }, [currentPage]);
 
   // Fetch user details dynamically and cache them
@@ -75,23 +70,22 @@ const Reviews = () => {
   };
 
   useEffect(() => {
-    filteredReviews.forEach((review) => {
+    reviews.forEach((review) => {
       if (!users[review.user_fk]) {
         fetchUserDetails(review.user_fk);
       }
     });
-  }, [filteredReviews]);
+  }, [reviews]);
 
   const handleSearch = () => {
     if (searchTerm.trim() === "") {
-      setFilteredReviews(reviews);
+      fetchReviews(); // Reset reviews if search is cleared
     } else {
       const filtered = reviews.filter((review) =>
         review.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setFilteredReviews(filtered);
+      setReviews(filtered);
     }
-    setCurrentPage(1);
   };
 
   const handleInputChange = (e) => {
@@ -99,8 +93,7 @@ const Reviews = () => {
     setSearchTerm(value);
 
     if (value.trim() === "") {
-      setFilteredReviews(reviews);
-      setCurrentPage(1);
+      fetchReviews();
     }
   };
 
@@ -148,7 +141,7 @@ const Reviews = () => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {filteredReviews.map((review) => (
+                    {reviews.map((review) => (
                       <Tr key={review.id}>
                         <Td>{review.id}</Td>
                         <Td>
@@ -172,7 +165,7 @@ const Reviews = () => {
                 <Button onClick={goToPreviousPage} isDisabled={currentPage === 1} colorScheme="teal" mr={4}>
                   Previous
                 </Button>
-                <Button onClick={goToNextPage} isDisabled={filteredReviews.length < reviewsPerPage} colorScheme="teal">
+                <Button onClick={goToNextPage} colorScheme="teal">
                   Next
                 </Button>
               </Flex>
@@ -185,4 +178,3 @@ const Reviews = () => {
 };
 
 export default Reviews;
-

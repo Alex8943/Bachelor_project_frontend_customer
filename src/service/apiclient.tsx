@@ -135,18 +135,19 @@ export const searchReviews = async (value: string) => {
   }
 };
 
-export const getRangeOfReviews = async (max: any) => {
+export const getRangeOfReviews = async (max, offset) => {
   try {
     const authToken = getAuthToken();
-    const response = await axios.get(`${API_URL}/reviews/${max}`, {
+    const response = await axios.get(`${API_URL}/reviews/${max}/${offset}`, {
       headers: { Authorization: `Bearer ${authToken}` },
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching reviews:', error);
+    console.error("Error fetching reviews:", error);
     throw error;
   }
 };
+
 
 export const getOneUser = async (id: number) => {
   try {

@@ -13,35 +13,39 @@ import {
   Flex,
   Button,
   Input,
+  Select,
 } from "@chakra-ui/react";
 import { getRangeOfReviews, getOneUser } from "../../../service/apiclient";
 import { Link, useNavigate } from "react-router-dom";
 
 const Reviews = () => {
   const authToken = sessionStorage.getItem("authToken");
-  const [reviews, setReviews] = useState([]);
+  const [allReviews, setAllReviews] = useState([]); // Store the original dataset
+  const [reviews, setReviews] = useState([]); // Displayed reviews
   const [users, setUsers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const reviewsPerPage = 25; // Number of reviews to fetch per page
+  const [selectedGenre, setSelectedGenre] = useState("");
+  const [selectedPlatform, setSelectedPlatform] = useState("");
+  const [filterMessage, setFilterMessage] = useState(""); // To display filter messages
+  const reviewsPerPage = 25;
   const navigate = useNavigate();
 
-  // Check access on mount
   useEffect(() => {
     if (!authToken) {
       navigate("/");
     }
   }, [authToken, navigate]);
 
-  // Fetch reviews from the backend for the current page
   const fetchReviews = async () => {
     try {
       setLoading(true);
-      const offset = (currentPage - 1) * reviewsPerPage; // Calculate offset based on the page
-      const reviewsData = await getRangeOfReviews(reviewsPerPage, offset); // Fetch reviews with limit and offset
-      setReviews(reviewsData);
+      const offset = (currentPage - 1) * reviewsPerPage;
+      const reviewsData = await getRangeOfReviews(reviewsPerPage, offset);
+      setAllReviews(reviewsData); // Store original dataset
+      setReviews(reviewsData); // Display the same initially
       console.log("Reviews fetched pr. page: ", reviewsData);
     } catch (error) {
       setError("Failed to load reviews.");
@@ -51,10 +55,9 @@ const Reviews = () => {
   };
 
   useEffect(() => {
-    fetchReviews(); // Fetch reviews when the page changes
+    fetchReviews();
   }, [currentPage]);
 
-  // Fetch user details dynamically and cache them
   const fetchUserDetails = async (userId) => {
     if (!users[userId]) {
       try {
@@ -77,52 +80,158 @@ const Reviews = () => {
     });
   }, [reviews]);
 
-  const handleSearch = () => {
-    if (searchTerm.trim() === "") {
-      fetchReviews(); // Reset reviews if search is cleared
-    } else {
-      const filtered = reviews.filter((review) =>
-        review.title.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter when selectedGenre or selectedPlatform changes
+  useEffect(() => {
+    let filteredReviews = [...allReviews];
+
+    if (selectedGenre) {
+      filteredReviews = filteredReviews.filter(
+        (review) =>
+          Array.isArray(review.Genres) &&
+          review.Genres.some((genre) => genre.name === selectedGenre)
       );
-      setReviews(filtered);
     }
+
+    if (selectedPlatform) {
+      filteredReviews = filteredReviews.filter(
+        (review) => review.platform_fk.toString() === selectedPlatform
+      );
+    }
+
+    if (filteredReviews.length === 0) {
+      setFilterMessage("No reviews match the selected filters.");
+    } else if (selectedGenre) {
+      setFilterMessage(`Filtering reviews for genre: ${selectedGenre}`);
+    } else if (selectedPlatform) {
+      setFilterMessage(`Filtering reviews for platform: ${selectedPlatform}`);
+    } else {
+      setFilterMessage("");
+    }
+
+    setReviews(filteredReviews);
+  }, [selectedGenre, selectedPlatform, allReviews]);
+
+  const handleGenreChange = (e) => {
+    setSelectedGenre(e.target.value);
+  };
+
+  const handlePlatformChange = (e) => {
+    setSelectedPlatform(e.target.value);
+  };
+
+  const truncateText = (text, length = 50) => {
+    return text.length > length ? `${text.slice(0, length)}...` : text;
   };
 
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
+    setSearchTerm(e.target.value);
+  };
 
-    if (value.trim() === "") {
-      fetchReviews();
+  const handleSearch = () => {
+    let filteredReviews = [...allReviews];
+
+    if (searchTerm.trim()) {
+      filteredReviews = filteredReviews.filter((review) =>
+        review.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setReviews(filteredReviews);
+    setCurrentPage(1);
+
+    if (filteredReviews.length === 0) {
+      setFilterMessage("No reviews match your search.");
+    } else {
+      setFilterMessage("");
     }
   };
 
   const goToNextPage = () => setCurrentPage((prev) => prev + 1);
-  const goToPreviousPage = () => setCurrentPage((prev) => (prev > 1 ? prev - 1 : 1));
+  const goToPreviousPage = () =>
+    setCurrentPage((prev) => (prev > 1 ? prev - 1 : 1));
 
-  const truncateText = (text, length = 50) => {
-    return text.length > length ? `${text.slice(0, length)}...` : text;
+  const resetFilters = () => {
+    setSelectedGenre(""); // Reset genre filter
+    setSelectedPlatform(""); // Reset platform filter
+    setSearchTerm(""); // Reset search term
+    setFilterMessage(""); // Clear filter messages
+    setCurrentPage(1); // Reset to the first page
+    setReviews(allReviews); // Reset to all reviews
   };
 
   return (
     <Flex minHeight="100vh" direction="column" mt={90}>
       <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh" p={4}>
         <Box maxWidth="80%" width="100%" mx="auto">
-          <Flex justifyContent="center" alignItems="center" mb={4}>
-            <Box width="70%">
-              <Input
-                placeholder="Search by title..."
-                value={searchTerm}
-                onChange={handleInputChange}
-                width="100%"
-                focusBorderColor="teal.400"
-              />
-            </Box>
+          {/* Search Bar */}
+          <Flex mb={4}>
+            <Input
+              placeholder="Search by title..."
+              value={searchTerm}
+              onChange={handleInputChange}
+              width="100%"
+              focusBorderColor="teal.400"
+            />
             <Button onClick={handleSearch} colorScheme="teal" ml={2}>
               Search
             </Button>
           </Flex>
 
+          {/* Filters */}
+          <Flex mb={4} justifyContent="space-between">
+            <Box width="48%">
+              <Select
+                placeholder="Filter by genre"
+                onChange={handleGenreChange}
+                value={selectedGenre}
+              >
+                {Array.from(
+                  new Set(
+                    allReviews.flatMap((review) =>
+                      Array.isArray(review.Genres)
+                        ? review.Genres.map((genre) => genre.name)
+                        : []
+                    )
+                  )
+                ).map((genreName, index) => (
+                  <option key={index} value={genreName}>
+                    {genreName}
+                  </option>
+                ))}
+              </Select>
+            </Box>
+            <Box width="48%">
+              <Select
+                placeholder="Filter by platform"
+                onChange={handlePlatformChange}
+                value={selectedPlatform}
+              >
+                {Array.from(new Set(allReviews.map((review) => review.platform_fk))).map(
+                  (platform, index) => (
+                    <option key={index} value={platform}>
+                      Platform {platform}
+                    </option>
+                  )
+                )}
+              </Select>
+            </Box>
+          </Flex>
+
+          {/* Filter Message */}
+          {filterMessage && (
+            <Text mb={4} color="blue.500" fontWeight="bold" textAlign="center">
+              {filterMessage}
+            </Text>
+          )}
+
+          {/* Delete Filter Button */}
+          <Flex justifyContent="flex-end" mb={4}>
+            <Button onClick={resetFilters} colorScheme="red">
+              Delete Filters
+            </Button>
+          </Flex>
+
+          {/* Table or Spinner */}
           {loading ? (
             <Spinner size="xl" color="green.500" />
           ) : error ? (
@@ -162,7 +271,12 @@ const Reviews = () => {
               </TableContainer>
 
               <Flex justifyContent="center" mt={4}>
-                <Button onClick={goToPreviousPage} isDisabled={currentPage === 1} colorScheme="teal" mr={4}>
+                <Button
+                  onClick={goToPreviousPage}
+                  isDisabled={currentPage === 1}
+                  colorScheme="teal"
+                  mr={4}
+                >
                   Previous
                 </Button>
                 <Button onClick={goToNextPage} colorScheme="teal">

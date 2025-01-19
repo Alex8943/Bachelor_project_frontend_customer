@@ -64,6 +64,7 @@ export const createReview = async (data) => {
     const response = await axios.post(`${API_URL}/review`, data, {
       headers: { Authorization: `Bearer ${authToken}` },
     });
+    console.log("api response: ", response.data);
     return response.data;
   } catch (error) {
     console.error('Error creating review:', error);
@@ -117,20 +118,6 @@ export const getAllReviewsByUser = async (id: number) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching reviews:', error);
-    throw error;
-  }
-};
-
-export const searchReviews = async (value: string) => {
-  try {
-    const authToken = getAuthToken();
-    const response = await axios.get(`${API_URL}/review/${value}`, {
-      headers: { Authorization: `Bearer ${authToken}` },
-    });
-    console.log("Search results: ", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching reviews:", error);
     throw error;
   }
 };

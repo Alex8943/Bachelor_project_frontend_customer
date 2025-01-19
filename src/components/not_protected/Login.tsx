@@ -30,7 +30,7 @@ const Login = () => {
       const response = await login({ email: formData.email, password: formData.password });
   
       if (response.user.isBlocked) {
-        setMessage('No email or password with these credentials.');
+        setMessage('Your blocked from the system');
         setIsLoading(false); 
         return;
       }

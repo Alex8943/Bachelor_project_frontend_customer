@@ -160,7 +160,7 @@ const Reviews = () => {
   };
 
   return (
-    <Flex minHeight="100vh" direction="column" mt={90}>
+    <Flex minHeight="100vh" direction="column" mt={90} marginRight="200px">
       <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh" p={4}>
         <Box maxWidth="80%" width="100%" mx="auto">
           {/* Search Bar */}

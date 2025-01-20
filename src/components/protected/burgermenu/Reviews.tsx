@@ -15,7 +15,7 @@ import {
   Input,
   Select,
 } from "@chakra-ui/react";
-import { getRangeOfReviews, getOneUser } from "../../../service/apiclient";
+import { getRangeOfReviews, getOneUser, getAllPlatforms } from "../../../service/apiclient";
 import { Link, useNavigate } from "react-router-dom";
 
 const Reviews = () => {
@@ -30,6 +30,7 @@ const Reviews = () => {
   const [selectedGenre, setSelectedGenre] = useState("");
   const [selectedPlatform, setSelectedPlatform] = useState("");
   const [filterMessage, setFilterMessage] = useState(""); // To display filter messages
+  const [platformOptions, setPlatformOptions] = useState([]);
   const reviewsPerPage = 25;
   const navigate = useNavigate();
 
@@ -54,8 +55,19 @@ const Reviews = () => {
     }
   };
 
+  const fetchPlatforms = async () => {
+    try {
+      const platforms = await getAllPlatforms();
+      setPlatformOptions(platforms);
+      console.log("Platforms fetched: ", platforms.map((p) => p.link)); // Log platform names
+    } catch (error) {
+      console.error("Failed to fetch platforms:", error);
+    }
+  };
+
   useEffect(() => {
     fetchReviews();
+    fetchPlatforms(); // Fetch platforms when the component mounts
   }, [currentPage]);
 
   const fetchUserDetails = async (userId) => {
@@ -92,12 +104,14 @@ const Reviews = () => {
       );
     }
 
+    
     if (selectedPlatform) {
-      filteredReviews = filteredReviews.filter(
-        (review) => review.platform_fk.toString() === selectedPlatform
-      );
+      filteredReviews = filteredReviews.filter((review) => {
+        const platform = platformOptions.find((p) => p.id === review.platform_fk);
+        return platform && platform.link === selectedPlatform;
+      });
     }
-
+    
     if (filteredReviews.length === 0) {
       setFilterMessage("No reviews match the selected filters.");
     } else if (selectedGenre) {
@@ -201,19 +215,18 @@ const Reviews = () => {
               </Select>
             </Box>
             <Box width="48%">
-              <Select
-                placeholder="Filter by platform"
-                onChange={handlePlatformChange}
-                value={selectedPlatform}
-              >
-                {Array.from(new Set(allReviews.map((review) => review.platform_fk))).map(
-                  (platform, index) => (
-                    <option key={index} value={platform}>
-                      Platform {platform}
-                    </option>
-                  )
-                )}
-              </Select>
+            <Select
+              placeholder="Filter by platform"
+              onChange={handlePlatformChange}
+              value={selectedPlatform}
+            >
+              {platformOptions.map((platform) => (
+                <option key={platform.id} value={platform.link}>
+                  {platform.link}
+                </option>
+              ))}
+            </Select>
+
             </Box>
           </Flex>
 

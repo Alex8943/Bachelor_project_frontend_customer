@@ -35,7 +35,7 @@ const CreateReview = () => {
   const [mediaOptions, setMediaOptions] = useState([]);
   const [platformOptions, setPlatformOptions] = useState([]);
   const [genreOptions, setGenreOptions] = useState([]);
-  const [userId, setUserId] = useState<number | null>(null);  // Store user ID
+  const [userId, setUserId] = useState(null);  // Store user ID
 
   const toast = useToast();
   const navigate = useNavigate();

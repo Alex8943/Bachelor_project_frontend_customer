@@ -7,6 +7,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false); 
+  
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -46,7 +47,8 @@ const Login = () => {
       sessionStorage.setItem('authToken', response.authToken);
       sessionStorage.setItem('userRoleName', response.user.Role.name); 
       sessionStorage.setItem('userName', response.user.name);
-      sessionStorage.setItem('userEmail', response.user.email);
+      sessionStorage.setItem('userEmail', response.user.email);      
+      sessionStorage.setItem('userId', response.user.id); // Assuming user.id represents the user_fk
 
   
       setMessage('Login successful!');

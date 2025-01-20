@@ -47,7 +47,7 @@ const Profile = () => {
     setUserId(Number(storedUserId));
     setLoading(false);
 
-    console.log("User: ", storedName, storedEmail, storedRoleName, storedUserId);
+    console.log("User: ", "\n", storedName, "\n", storedEmail, "\n", storedRoleName, "\n", storedUserId);
     
     
     

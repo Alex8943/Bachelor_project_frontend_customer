@@ -51,6 +51,7 @@ function SignUp() {
         sessionStorage.setItem('userRoleName', response.user.Role.name); // Updated to correctly save the role name
         sessionStorage.setItem('userName', response.user.name);
         sessionStorage.setItem('userEmail', response.user.email);
+        sessionStorage.setItem('userId', response.user.id); // Assuming user.id represents the user_fk
 
         login(response.authToken);
         setMessage('Signup successful!');

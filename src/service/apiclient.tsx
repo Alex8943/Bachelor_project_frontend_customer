@@ -32,7 +32,8 @@ export const login = async ({ email, password }) => {
 
 export const signup = async ({ name, lastname, email, password }) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/signup`, { name, lastname, email, password });
+    console.log("signup data: ", { name, lastname, email, password });
+    const response = await axios.post(`${API_URL}/auth/signup`, { name, lastname, email, password, role_fk: 3 });
 
     const { authToken } = response.data;
 

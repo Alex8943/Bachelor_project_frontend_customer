@@ -59,20 +59,6 @@ const getAuthToken = (): string => {
 };
 
 
-export const createReview = async (data) => {
-  try {
-    const authToken = getAuthToken();
-    const response = await axios.post(`${API_URL}/review`, data, {
-      headers: { Authorization: `Bearer ${authToken}` },
-    });
-    console.log("api response: ", response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error creating review:', error);
-    throw error;
-  }
-}
-
 export const updateUser = async (id, data) => {
   try {
     const authToken = getAuthToken();
@@ -149,6 +135,20 @@ export const getOneUser = async (id: number) => {
     throw error;
   }
 };
+
+export const createReview = async (data) => {
+  try {
+    const authToken = getAuthToken();
+    const response = await axios.post(`${API_URL}/review`, data, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
+    console.log("api response: ", response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating review:', error);
+    throw error;
+  }
+}
 
 export const deleteReview = async (id: number) => {
   try {
